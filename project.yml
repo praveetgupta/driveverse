@@ -63,6 +63,9 @@ targets:
     platform: iOS
     sources:
       - path: DriveVerseTests
+    settings:
+      base:
+        GENERATE_INFOPLIST_FILE: true
     dependencies:
       - target: DriveVerse
 
