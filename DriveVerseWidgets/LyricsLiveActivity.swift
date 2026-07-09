@@ -55,13 +55,51 @@ struct LyricsLiveActivity: Widget {
                     .foregroundStyle(.tint)
             }
         }
+        // CarPlay (and the Watch Smart Stack) render the .small family;
+        // without this opt-in they fall back to the compact Dynamic Island
+        // views, which truncate the lyric to one short marquee.
+        .supplementalActivityFamilies([.small])
     }
 }
 
 struct LockScreenLyricsView: View {
     let context: ActivityViewContext<LyricsAttributes>
+    @Environment(\.activityFamily) private var family
 
     var body: some View {
+        Group {
+            if family == .small {
+                smallBody
+            } else {
+                mediumBody
+            }
+        }
+        .activityBackgroundTint(Color.black.opacity(0.75))
+        .activitySystemActionForegroundColor(.white)
+    }
+
+    /// CarPlay tile / Watch Smart Stack: no room for meta chrome — the
+    /// lyric IS the content. Two rows plus progress, high contrast (§5).
+    private var smallBody: some View {
+        VStack(alignment: .leading, spacing: 4) {
+            Text(context.state.currentLine)
+                .font(.headline.bold())
+                .lineLimit(2)
+                .minimumScaleFactor(0.8)
+                .frame(maxWidth: .infinity, alignment: .leading)
+
+            Text(context.state.nextLine)
+                .font(.caption)
+                .foregroundStyle(.secondary)
+                .lineLimit(1)
+
+            ProgressView(value: context.state.progress)
+                .tint(.white.opacity(0.85))
+        }
+        .padding(10)
+    }
+
+    private var mediumBody: some View {
         VStack(alignment: .leading, spacing: 6) {
             HStack(spacing: 6) {
                 Image(systemName: context.state.isPlaying ? "music.note" : "pause.fill")
@@ -92,8 +130,6 @@ struct LockScreenLyricsView: View {
                 .tint(.white.opacity(0.85))
         }
         .padding(14)
-        .activityBackgroundTint(Color.black.opacity(0.75))
-        .activitySystemActionForegroundColor(.white)
     }
 }
 #endif

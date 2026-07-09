@@ -114,6 +114,26 @@ extension HTTPStubbedTests {
         #expect(body.contains("client_id=client123"))
     }
 
+    @MainActor @Test func reconnectBannerClearsWhenTokenReadable() async throws {
+        // A locked-phone Keychain miss raises the banner; it must clear on
+        // the next successful read instead of sticking until manual reconnect.
+        StubURLProtocol.reset { _ in (500, Data()) }
+        let (auth, _) = makeAuth(expiresIn: 3600)
+        auth.needsReconnect = true
+        _ = try await auth.validAccessToken()
+        #expect(!auth.needsReconnect)
+    }
+
+    @MainActor @Test func reconnectBannerClearsOnSuccessfulRefresh() async throws {
+        StubURLProtocol.reset { _ in
+            (200, Data(#"{"access_token":"new-access","refresh_token":"new-refresh","expires_in":3600}"#.utf8))
+        }
+        let (auth, _) = makeAuth(expiresIn: -60)
+        auth.needsReconnect = true
+        _ = try await auth.validAccessToken()
+        #expect(!auth.needsReconnect)
+    }
+
     @MainActor @Test func rotatedRefreshTokenKeptWhenOmitted() async throws {
         StubURLProtocol.reset { _ in
             (200, Data(#"{"access_token":"new-access","expires_in":3600}"#.utf8))

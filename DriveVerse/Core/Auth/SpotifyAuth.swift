@@ -100,6 +100,10 @@ final class KeychainTokenStore: TokenStore {
         SecItemDelete(baseQuery as CFDictionary)
         var add = baseQuery
         add[kSecValueData as String] = data
+        // Drive Mode polls Spotify while the phone is locked; the default
+        // (WhenUnlocked) makes those reads fail and triggers spurious
+        // reconnect banners mid-drive.
+        add[kSecAttrAccessible as String] = kSecAttrAccessibleAfterFirstUnlock
         SecItemAdd(add as CFDictionary, nil)
     }
 
@@ -260,6 +264,7 @@ final class SpotifyAuth: NSObject, ObservableObject {
         let token = store.load()
         switch SpotifyTokenPolicy.action(for: token, now: now()) {
         case .useCurrent:
+            if needsReconnect { needsReconnect = false }
             return token!.accessToken
         case .refresh:
             return try await refreshNow().accessToken
@@ -298,6 +303,7 @@ final class SpotifyAuth: NSObject, ObservableObject {
             store.save(newToken)
             lastRefreshAt = now()
             isConnected = true
+            if needsReconnect { needsReconnect = false }
             return newToken
         } catch SpotifyAuthError.refreshRejected {
             store.clear()
