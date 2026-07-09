@@ -5,6 +5,12 @@ options:
     iOS: "26.0"
   createIntermediateGroups: true
 
+# Marks the project as already upgraded so Xcode stops offering its
+# "update to recommended settings" dialog (whose direct pbxproj edits a
+# regeneration would wipe anyway).
+attributes:
+  LastUpgradeCheck: "2660"
+
 settings:
   base:
     SWIFT_VERSION: "5.0"
@@ -12,6 +18,8 @@ settings:
     MARKETING_VERSION: "1.0"
     CURRENT_PROJECT_VERSION: "1"
     TARGETED_DEVICE_FAMILY: "1"
+    ENABLE_USER_SCRIPT_SANDBOXING: YES
+    STRING_CATALOG_GENERATE_SYMBOLS: YES
 
 targets:
   DriveVerse:
