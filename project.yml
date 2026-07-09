@@ -1,0 +1,78 @@
+name: DriveVerse
+options:
+  bundleIdPrefix: com.praveet
+  deploymentTarget:
+    iOS: "26.0"
+  createIntermediateGroups: true
+
+settings:
+  base:
+    SWIFT_VERSION: "5.0"
+    CODE_SIGN_STYLE: Automatic
+    MARKETING_VERSION: "1.0"
+    CURRENT_PROJECT_VERSION: "1"
+    TARGETED_DEVICE_FAMILY: "1"
+
+targets:
+  DriveVerse:
+    type: application
+    platform: iOS
+    sources:
+      - path: DriveVerse
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.praveet.driveverse
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+        ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME: AccentColor
+    info:
+      path: DriveVerse/Resources/Info.plist
+      properties:
+        CFBundleDisplayName: DriveVerse
+        NSSupportsLiveActivities: true
+        NSAppleMusicUsageDescription: DriveVerse reads the current Apple Music track to fetch and display synced lyrics. It never plays or modifies your music.
+        UIBackgroundModes: [audio]
+        CFBundleURLTypes:
+          - CFBundleURLName: com.praveet.driveverse.auth
+            CFBundleURLSchemes: [driveverse]
+        UILaunchScreen: {}
+        UISupportedInterfaceOrientations:
+          - UIInterfaceOrientationPortrait
+        ITSAppUsesNonExemptEncryption: false
+    dependencies:
+      - target: DriveVerseWidgets
+        embed: true
+
+  DriveVerseWidgets:
+    type: app-extension
+    platform: iOS
+    sources:
+      - path: DriveVerseWidgets
+      - path: DriveVerse/LiveActivity/LyricsAttributes.swift
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.praveet.driveverse.widgets
+    info:
+      path: DriveVerseWidgets/Info.plist
+      properties:
+        CFBundleDisplayName: DriveVerse Lyrics
+        NSExtension:
+          NSExtensionPointIdentifier: com.apple.widgetkit-extension
+
+  DriveVerseTests:
+    type: bundle.unit-test
+    platform: iOS
+    sources:
+      - path: DriveVerseTests
+    dependencies:
+      - target: DriveVerse
+
+schemes:
+  DriveVerse:
+    build:
+      targets:
+        DriveVerse: all
+    run:
+      config: Debug
+    test:
+      targets:
+        - DriveVerseTests

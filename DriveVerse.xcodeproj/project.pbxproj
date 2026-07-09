@@ -1,0 +1,750 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		00C0778DF406BC34CF19DDB9 /* NowPlayingSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 966612231B8FF4569AC4B77D /* NowPlayingSource.swift */; };
+		041F2522B3ED8825FF6F9CB0 /* SyncEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = B936DB53A7912A6E22A5F4DF /* SyncEngine.swift */; };
+		047CF7F8ACCFC79C6778077C /* LyricsScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B31B5A3C84D01E73354E11D /* LyricsScreen.swift */; };
+		0792482C66234D90B8906EE3 /* DriveVerseApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BD201D0AF5AAE7D65D255FF /* DriveVerseApp.swift */; };
+		0DF1109E255FABCA169F91E3 /* LRCParserTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33748827FA1F2961B39583A6 /* LRCParserTests.swift */; };
+		11A91552214C2699864D16CC /* ScaffoldTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7266FA38ED9709457C305111 /* ScaffoldTests.swift */; };
+		17DE808D5CB7D9375AA5F2FF /* LyricsLiveActivity.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6BF21625B40AD357F50F13E /* LyricsLiveActivity.swift */; };
+		1AD8F43DCAFB56CD772B2B29 /* BackgroundKeeper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18E5FB7A2516764DD3D734E4 /* BackgroundKeeper.swift */; };
+		2090FCA711071F940A2FC238 /* LyricsMatcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = EDB4D8EC98363806ED4367C8 /* LyricsMatcher.swift */; };
+		262C9781DDCAA5945536FE64 /* NowPlayingCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 191A3C57E8CCD995324E3DE0 /* NowPlayingCoordinator.swift */; };
+		27EE35BFA39B03A7D707CCD5 /* LyricsAttributes.swift in Sources */ = {isa = PBXBuildFile; fileRef = B7D50CB10C457B5FDA5C18A4 /* LyricsAttributes.swift */; };
+		3850C33B60081FB30D645855 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 96FBECE39D05D602D1D21998 /* Assets.xcassets */; };
+		45B35ED49CD2C195FD66CC96 /* LRCLIBClientTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED260159BBFBE6E21D3E96F0 /* LRCLIBClientTests.swift */; };
+		4CECC61AC61FF6C56E16CDEE /* LyricsMatcherTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE5806DC04680356D910CB26 /* LyricsMatcherTests.swift */; };
+		60727B17611118FEE4136983 /* LyricsAttributes.swift in Sources */ = {isa = PBXBuildFile; fileRef = B7D50CB10C457B5FDA5C18A4 /* LyricsAttributes.swift */; };
+		632665D24FDE43A4F3A2D886 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADC4F0A911AA90F04EDD9D29 /* HomeView.swift */; };
+		632FB0A9869AD363AEF1B1B2 /* SyncEngineTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F4833029C28CE94E1B93117 /* SyncEngineTests.swift */; };
+		69D23CEBEC66777E7396B410 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2C7886F813AC23359C59468 /* SettingsView.swift */; };
+		7B560BB37413F13CD2C2A307 /* SpotifySourceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCA7F680E5F709BA7D68C636 /* SpotifySourceTests.swift */; };
+		7C8EDD09C38888CA925E0FA3 /* LyricsService.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE443411721188CA1CD78AEB /* LyricsService.swift */; };
+		8529D614A1619C2F9E88124C /* SpotifyAuthTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82690FC4252741DBC09DB3C1 /* SpotifyAuthTests.swift */; };
+		8FC11068E7FA630811B83E0B /* LiveActivityUpdatePolicy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61126F206FA27DEAF30E275A /* LiveActivityUpdatePolicy.swift */; };
+		92E275E5D691045037D90F95 /* LiveActivityController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59FA7AA57D661AB7A26BF4DF /* LiveActivityController.swift */; };
+		9926E31A0D1789CE345B2FFC /* AppleMusicSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FAFE0BD274A8225F8B15A4B /* AppleMusicSource.swift */; };
+		99B4532877B023B050726924 /* LyricsCacheTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA064D09A1101784EEF1ECE4 /* LyricsCacheTests.swift */; };
+		9BA384F2E9E3FDEE3CF12008 /* AppleMusicMapperTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBDAA6D02D67EAC13330BF88 /* AppleMusicMapperTests.swift */; };
+		B2FC9A01B8B1FF544D361B3F /* Secrets.example.plist in Resources */ = {isa = PBXBuildFile; fileRef = 328E027729B5A93D39068C7C /* Secrets.example.plist */; };
+		BA2D3E1E68FA87168F46FF1E /* LRCLIBClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4688F2973765498FC251906 /* LRCLIBClient.swift */; };
+		BAB34E02616B243EE8DA0FD5 /* LRCParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B07BCDA93210C8926EFC189 /* LRCParser.swift */; };
+		D2FD9EF9591DD5197DED9E0D /* DriveVerseWidgets.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = B5032A3403B70D48EC541330 /* DriveVerseWidgets.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		D8ED58A7DEE2EEA11B49F7BC /* LyricsCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4587993C109AD281E415EF9 /* LyricsCache.swift */; };
+		E65836D2791CB7B558C760C6 /* LiveActivityPolicyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 13E381F38AE762E88B34AF9A /* LiveActivityPolicyTests.swift */; };
+		EC4BE5FAA9921628AC3A2D0C /* AppModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDD7A295A0865928BA32F559 /* AppModel.swift */; };
+		EF2C3EC57DE5B6C669EFD9F5 /* SpotifySource.swift in Sources */ = {isa = PBXBuildFile; fileRef = D230740C807DAFF0C3A621ED /* SpotifySource.swift */; };
+		F33E5CF3DB483E6B209F87D4 /* CoordinatorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7778707E92D6356CE39C3C67 /* CoordinatorTests.swift */; };
+		FC14F3DF93F070781BA7B1BA /* SpotifyAuth.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A457EF455F2DAC410A89728 /* SpotifyAuth.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		4F907A467523E3B75F90DF4B /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0058046BB6DF7D963E382CA3 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = DE7973B66E7FB705D2ABCC73;
+			remoteInfo = DriveVerseWidgets;
+		};
+		B143766DBCF6FFC4E2E7F47A /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0058046BB6DF7D963E382CA3 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 31CDF9776C5DFB3CC7CBB51A;
+			remoteInfo = DriveVerse;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		00634B165D43FD7EC2F97179 /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				D2FD9EF9591DD5197DED9E0D /* DriveVerseWidgets.appex in Embed Foundation Extensions */,
+			);
+			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		0B31B5A3C84D01E73354E11D /* LyricsScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LyricsScreen.swift; sourceTree = "<group>"; };
+		13E381F38AE762E88B34AF9A /* LiveActivityPolicyTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiveActivityPolicyTests.swift; sourceTree = "<group>"; };
+		166238F7FC0FF73346F83182 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		18E5FB7A2516764DD3D734E4 /* BackgroundKeeper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackgroundKeeper.swift; sourceTree = "<group>"; };
+		191A3C57E8CCD995324E3DE0 /* NowPlayingCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NowPlayingCoordinator.swift; sourceTree = "<group>"; };
+		1FAFE0BD274A8225F8B15A4B /* AppleMusicSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppleMusicSource.swift; sourceTree = "<group>"; };
+		328E027729B5A93D39068C7C /* Secrets.example.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Secrets.example.plist; sourceTree = "<group>"; };
+		33748827FA1F2961B39583A6 /* LRCParserTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LRCParserTests.swift; sourceTree = "<group>"; };
+		4BD201D0AF5AAE7D65D255FF /* DriveVerseApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DriveVerseApp.swift; sourceTree = "<group>"; };
+		59FA7AA57D661AB7A26BF4DF /* LiveActivityController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiveActivityController.swift; sourceTree = "<group>"; };
+		61126F206FA27DEAF30E275A /* LiveActivityUpdatePolicy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiveActivityUpdatePolicy.swift; sourceTree = "<group>"; };
+		7266FA38ED9709457C305111 /* ScaffoldTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScaffoldTests.swift; sourceTree = "<group>"; };
+		7778707E92D6356CE39C3C67 /* CoordinatorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoordinatorTests.swift; sourceTree = "<group>"; };
+		7B07BCDA93210C8926EFC189 /* LRCParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LRCParser.swift; sourceTree = "<group>"; };
+		82690FC4252741DBC09DB3C1 /* SpotifyAuthTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpotifyAuthTests.swift; sourceTree = "<group>"; };
+		8A457EF455F2DAC410A89728 /* SpotifyAuth.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpotifyAuth.swift; sourceTree = "<group>"; };
+		8C2EF599884306CCAE331E82 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		8F4833029C28CE94E1B93117 /* SyncEngineTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SyncEngineTests.swift; sourceTree = "<group>"; };
+		966612231B8FF4569AC4B77D /* NowPlayingSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NowPlayingSource.swift; sourceTree = "<group>"; };
+		96FBECE39D05D602D1D21998 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		A0B4549E3346E152F7BDE493 /* DriveVerseTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = DriveVerseTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		ADC4F0A911AA90F04EDD9D29 /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
+		B5032A3403B70D48EC541330 /* DriveVerseWidgets.appex */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = "wrapper.app-extension"; path = DriveVerseWidgets.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		B6BF21625B40AD357F50F13E /* LyricsLiveActivity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LyricsLiveActivity.swift; sourceTree = "<group>"; };
+		B7D50CB10C457B5FDA5C18A4 /* LyricsAttributes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LyricsAttributes.swift; sourceTree = "<group>"; };
+		B936DB53A7912A6E22A5F4DF /* SyncEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SyncEngine.swift; sourceTree = "<group>"; };
+		BCA7F680E5F709BA7D68C636 /* SpotifySourceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpotifySourceTests.swift; sourceTree = "<group>"; };
+		C1E4F07C72942513C3DBEF6B /* DriveVerse.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = DriveVerse.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		CDD7A295A0865928BA32F559 /* AppModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppModel.swift; sourceTree = "<group>"; };
+		CE443411721188CA1CD78AEB /* LyricsService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LyricsService.swift; sourceTree = "<group>"; };
+		D230740C807DAFF0C3A621ED /* SpotifySource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpotifySource.swift; sourceTree = "<group>"; };
+		D4688F2973765498FC251906 /* LRCLIBClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LRCLIBClient.swift; sourceTree = "<group>"; };
+		DA064D09A1101784EEF1ECE4 /* LyricsCacheTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LyricsCacheTests.swift; sourceTree = "<group>"; };
+		E4587993C109AD281E415EF9 /* LyricsCache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LyricsCache.swift; sourceTree = "<group>"; };
+		ED260159BBFBE6E21D3E96F0 /* LRCLIBClientTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LRCLIBClientTests.swift; sourceTree = "<group>"; };
+		EDB4D8EC98363806ED4367C8 /* LyricsMatcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LyricsMatcher.swift; sourceTree = "<group>"; };
+		EE5806DC04680356D910CB26 /* LyricsMatcherTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LyricsMatcherTests.swift; sourceTree = "<group>"; };
+		F2C7886F813AC23359C59468 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+		FBDAA6D02D67EAC13330BF88 /* AppleMusicMapperTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppleMusicMapperTests.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXGroup section */
+		031D4F1C361F894319167C09 /* Auth */ = {
+			isa = PBXGroup;
+			children = (
+				8A457EF455F2DAC410A89728 /* SpotifyAuth.swift */,
+			);
+			path = Auth;
+			sourceTree = "<group>";
+		};
+		16A2460303D2598F8CCB463E /* Settings */ = {
+			isa = PBXGroup;
+			children = (
+				F2C7886F813AC23359C59468 /* SettingsView.swift */,
+			);
+			path = Settings;
+			sourceTree = "<group>";
+		};
+		21B0042383A265A786D55932 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				C1E4F07C72942513C3DBEF6B /* DriveVerse.app */,
+				A0B4549E3346E152F7BDE493 /* DriveVerseTests.xctest */,
+				B5032A3403B70D48EC541330 /* DriveVerseWidgets.appex */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		47F98116724134F7D5EEFFD0 /* NowPlaying */ = {
+			isa = PBXGroup;
+			children = (
+				1FAFE0BD274A8225F8B15A4B /* AppleMusicSource.swift */,
+				191A3C57E8CCD995324E3DE0 /* NowPlayingCoordinator.swift */,
+				966612231B8FF4569AC4B77D /* NowPlayingSource.swift */,
+				D230740C807DAFF0C3A621ED /* SpotifySource.swift */,
+			);
+			path = NowPlaying;
+			sourceTree = "<group>";
+		};
+		59A756C0AA7227ECE0A68386 /* DriveVerseTests */ = {
+			isa = PBXGroup;
+			children = (
+				FBDAA6D02D67EAC13330BF88 /* AppleMusicMapperTests.swift */,
+				7778707E92D6356CE39C3C67 /* CoordinatorTests.swift */,
+				13E381F38AE762E88B34AF9A /* LiveActivityPolicyTests.swift */,
+				ED260159BBFBE6E21D3E96F0 /* LRCLIBClientTests.swift */,
+				33748827FA1F2961B39583A6 /* LRCParserTests.swift */,
+				DA064D09A1101784EEF1ECE4 /* LyricsCacheTests.swift */,
+				EE5806DC04680356D910CB26 /* LyricsMatcherTests.swift */,
+				7266FA38ED9709457C305111 /* ScaffoldTests.swift */,
+				82690FC4252741DBC09DB3C1 /* SpotifyAuthTests.swift */,
+				BCA7F680E5F709BA7D68C636 /* SpotifySourceTests.swift */,
+				8F4833029C28CE94E1B93117 /* SyncEngineTests.swift */,
+			);
+			path = DriveVerseTests;
+			sourceTree = "<group>";
+		};
+		5FE9ED2BB149DD6222FAA9F1 /* Lyrics */ = {
+			isa = PBXGroup;
+			children = (
+				D4688F2973765498FC251906 /* LRCLIBClient.swift */,
+				7B07BCDA93210C8926EFC189 /* LRCParser.swift */,
+				E4587993C109AD281E415EF9 /* LyricsCache.swift */,
+				EDB4D8EC98363806ED4367C8 /* LyricsMatcher.swift */,
+				CE443411721188CA1CD78AEB /* LyricsService.swift */,
+			);
+			path = Lyrics;
+			sourceTree = "<group>";
+		};
+		66C93FB2C67EE4C8F8195CB4 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				96FBECE39D05D602D1D21998 /* Assets.xcassets */,
+				166238F7FC0FF73346F83182 /* Info.plist */,
+				328E027729B5A93D39068C7C /* Secrets.example.plist */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
+		66D71FD9C0AB4CE649168BBB /* Home */ = {
+			isa = PBXGroup;
+			children = (
+				ADC4F0A911AA90F04EDD9D29 /* HomeView.swift */,
+			);
+			path = Home;
+			sourceTree = "<group>";
+		};
+		7F65C2A4E131985A6742642D /* Sync */ = {
+			isa = PBXGroup;
+			children = (
+				B936DB53A7912A6E22A5F4DF /* SyncEngine.swift */,
+			);
+			path = Sync;
+			sourceTree = "<group>";
+		};
+		8A63C36211500DD3C531CA2A /* LyricsView */ = {
+			isa = PBXGroup;
+			children = (
+				0B31B5A3C84D01E73354E11D /* LyricsScreen.swift */,
+			);
+			path = LyricsView;
+			sourceTree = "<group>";
+		};
+		931A607722401957E5A974CA /* Features */ = {
+			isa = PBXGroup;
+			children = (
+				66D71FD9C0AB4CE649168BBB /* Home */,
+				8A63C36211500DD3C531CA2A /* LyricsView */,
+				16A2460303D2598F8CCB463E /* Settings */,
+			);
+			path = Features;
+			sourceTree = "<group>";
+		};
+		95B24F47CFD2A4A3999C8B5F /* LiveActivity */ = {
+			isa = PBXGroup;
+			children = (
+				59FA7AA57D661AB7A26BF4DF /* LiveActivityController.swift */,
+				61126F206FA27DEAF30E275A /* LiveActivityUpdatePolicy.swift */,
+				B7D50CB10C457B5FDA5C18A4 /* LyricsAttributes.swift */,
+			);
+			path = LiveActivity;
+			sourceTree = "<group>";
+		};
+		B6A1FE467D945170F43AFA6A /* DriveVerse */ = {
+			isa = PBXGroup;
+			children = (
+				C373F7C4E305F2FE8A54E396 /* App */,
+				BB05D646CE58439660C179FC /* Core */,
+				931A607722401957E5A974CA /* Features */,
+				95B24F47CFD2A4A3999C8B5F /* LiveActivity */,
+				66C93FB2C67EE4C8F8195CB4 /* Resources */,
+			);
+			path = DriveVerse;
+			sourceTree = "<group>";
+		};
+		BB05D646CE58439660C179FC /* Core */ = {
+			isa = PBXGroup;
+			children = (
+				031D4F1C361F894319167C09 /* Auth */,
+				C79D26B14D1EF80BE8ADA6A3 /* KeepAlive */,
+				5FE9ED2BB149DD6222FAA9F1 /* Lyrics */,
+				47F98116724134F7D5EEFFD0 /* NowPlaying */,
+				7F65C2A4E131985A6742642D /* Sync */,
+			);
+			path = Core;
+			sourceTree = "<group>";
+		};
+		BB3FF97C00D84D1A0F8C5C22 /* DriveVerseWidgets */ = {
+			isa = PBXGroup;
+			children = (
+				8C2EF599884306CCAE331E82 /* Info.plist */,
+				B6BF21625B40AD357F50F13E /* LyricsLiveActivity.swift */,
+			);
+			path = DriveVerseWidgets;
+			sourceTree = "<group>";
+		};
+		C373F7C4E305F2FE8A54E396 /* App */ = {
+			isa = PBXGroup;
+			children = (
+				CDD7A295A0865928BA32F559 /* AppModel.swift */,
+				4BD201D0AF5AAE7D65D255FF /* DriveVerseApp.swift */,
+			);
+			path = App;
+			sourceTree = "<group>";
+		};
+		C79D26B14D1EF80BE8ADA6A3 /* KeepAlive */ = {
+			isa = PBXGroup;
+			children = (
+				18E5FB7A2516764DD3D734E4 /* BackgroundKeeper.swift */,
+			);
+			path = KeepAlive;
+			sourceTree = "<group>";
+		};
+		E5945E7A12A190A8DE06B82C = {
+			isa = PBXGroup;
+			children = (
+				B6A1FE467D945170F43AFA6A /* DriveVerse */,
+				59A756C0AA7227ECE0A68386 /* DriveVerseTests */,
+				BB3FF97C00D84D1A0F8C5C22 /* DriveVerseWidgets */,
+				21B0042383A265A786D55932 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		31CDF9776C5DFB3CC7CBB51A /* DriveVerse */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 478F5F24EDB9FF554FD72313 /* Build configuration list for PBXNativeTarget "DriveVerse" */;
+			buildPhases = (
+				F2C24DB37896880D6ABDB4E9 /* Sources */,
+				0C2CF8FBD29E674956608E3A /* Resources */,
+				00634B165D43FD7EC2F97179 /* Embed Foundation Extensions */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				38F9FE28677505181A08722D /* PBXTargetDependency */,
+			);
+			name = DriveVerse;
+			packageProductDependencies = (
+			);
+			productName = DriveVerse;
+			productReference = C1E4F07C72942513C3DBEF6B /* DriveVerse.app */;
+			productType = "com.apple.product-type.application";
+		};
+		B7C348DDE9E9033D535C0DE2 /* DriveVerseTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 79F5F53CBFCD9B0700CBE226 /* Build configuration list for PBXNativeTarget "DriveVerseTests" */;
+			buildPhases = (
+				7672B1EFAD3A9830E0DCA583 /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				C3929716AB722310CFE85962 /* PBXTargetDependency */,
+			);
+			name = DriveVerseTests;
+			packageProductDependencies = (
+			);
+			productName = DriveVerseTests;
+			productReference = A0B4549E3346E152F7BDE493 /* DriveVerseTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		DE7973B66E7FB705D2ABCC73 /* DriveVerseWidgets */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 332D03AA9BFDA67BC14917DA /* Build configuration list for PBXNativeTarget "DriveVerseWidgets" */;
+			buildPhases = (
+				D45CBA60927474300E41FDE4 /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = DriveVerseWidgets;
+			packageProductDependencies = (
+			);
+			productName = DriveVerseWidgets;
+			productReference = B5032A3403B70D48EC541330 /* DriveVerseWidgets.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		0058046BB6DF7D963E382CA3 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 1430;
+				TargetAttributes = {
+					31CDF9776C5DFB3CC7CBB51A = {
+						ProvisioningStyle = Automatic;
+					};
+					B7C348DDE9E9033D535C0DE2 = {
+						ProvisioningStyle = Automatic;
+					};
+					DE7973B66E7FB705D2ABCC73 = {
+						ProvisioningStyle = Automatic;
+					};
+				};
+			};
+			buildConfigurationList = 20FB9087FFC943A30DD12F9E /* Build configuration list for PBXProject "DriveVerse" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				Base,
+				en,
+			);
+			mainGroup = E5945E7A12A190A8DE06B82C;
+			minimizedProjectReferenceProxies = 1;
+			preferredProjectObjectVersion = 77;
+			productRefGroup = 21B0042383A265A786D55932 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				31CDF9776C5DFB3CC7CBB51A /* DriveVerse */,
+				B7C348DDE9E9033D535C0DE2 /* DriveVerseTests */,
+				DE7973B66E7FB705D2ABCC73 /* DriveVerseWidgets */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		0C2CF8FBD29E674956608E3A /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				3850C33B60081FB30D645855 /* Assets.xcassets in Resources */,
+				B2FC9A01B8B1FF544D361B3F /* Secrets.example.plist in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		7672B1EFAD3A9830E0DCA583 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				9BA384F2E9E3FDEE3CF12008 /* AppleMusicMapperTests.swift in Sources */,
+				F33E5CF3DB483E6B209F87D4 /* CoordinatorTests.swift in Sources */,
+				45B35ED49CD2C195FD66CC96 /* LRCLIBClientTests.swift in Sources */,
+				0DF1109E255FABCA169F91E3 /* LRCParserTests.swift in Sources */,
+				E65836D2791CB7B558C760C6 /* LiveActivityPolicyTests.swift in Sources */,
+				99B4532877B023B050726924 /* LyricsCacheTests.swift in Sources */,
+				4CECC61AC61FF6C56E16CDEE /* LyricsMatcherTests.swift in Sources */,
+				11A91552214C2699864D16CC /* ScaffoldTests.swift in Sources */,
+				8529D614A1619C2F9E88124C /* SpotifyAuthTests.swift in Sources */,
+				7B560BB37413F13CD2C2A307 /* SpotifySourceTests.swift in Sources */,
+				632FB0A9869AD363AEF1B1B2 /* SyncEngineTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D45CBA60927474300E41FDE4 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				27EE35BFA39B03A7D707CCD5 /* LyricsAttributes.swift in Sources */,
+				17DE808D5CB7D9375AA5F2FF /* LyricsLiveActivity.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F2C24DB37896880D6ABDB4E9 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				EC4BE5FAA9921628AC3A2D0C /* AppModel.swift in Sources */,
+				9926E31A0D1789CE345B2FFC /* AppleMusicSource.swift in Sources */,
+				1AD8F43DCAFB56CD772B2B29 /* BackgroundKeeper.swift in Sources */,
+				0792482C66234D90B8906EE3 /* DriveVerseApp.swift in Sources */,
+				632665D24FDE43A4F3A2D886 /* HomeView.swift in Sources */,
+				BA2D3E1E68FA87168F46FF1E /* LRCLIBClient.swift in Sources */,
+				BAB34E02616B243EE8DA0FD5 /* LRCParser.swift in Sources */,
+				92E275E5D691045037D90F95 /* LiveActivityController.swift in Sources */,
+				8FC11068E7FA630811B83E0B /* LiveActivityUpdatePolicy.swift in Sources */,
+				60727B17611118FEE4136983 /* LyricsAttributes.swift in Sources */,
+				D8ED58A7DEE2EEA11B49F7BC /* LyricsCache.swift in Sources */,
+				2090FCA711071F940A2FC238 /* LyricsMatcher.swift in Sources */,
+				047CF7F8ACCFC79C6778077C /* LyricsScreen.swift in Sources */,
+				7C8EDD09C38888CA925E0FA3 /* LyricsService.swift in Sources */,
+				262C9781DDCAA5945536FE64 /* NowPlayingCoordinator.swift in Sources */,
+				00C0778DF406BC34CF19DDB9 /* NowPlayingSource.swift in Sources */,
+				69D23CEBEC66777E7396B410 /* SettingsView.swift in Sources */,
+				FC14F3DF93F070781BA7B1BA /* SpotifyAuth.swift in Sources */,
+				EF2C3EC57DE5B6C669EFD9F5 /* SpotifySource.swift in Sources */,
+				041F2522B3ED8825FF6F9CB0 /* SyncEngine.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		38F9FE28677505181A08722D /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = DE7973B66E7FB705D2ABCC73 /* DriveVerseWidgets */;
+			targetProxy = 4F907A467523E3B75F90DF4B /* PBXContainerItemProxy */;
+		};
+		C3929716AB722310CFE85962 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 31CDF9776C5DFB3CC7CBB51A /* DriveVerse */;
+			targetProxy = B143766DBCF6FFC4E2E7F47A /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		0D1C9800BE5E278CC924DD2D /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"DEBUG=1",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
+				MARKETING_VERSION = 1.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Debug;
+		};
+		289D5E286BA17746E1447923 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.praveet.DriveVerseTests;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/DriveVerse.app/DriveVerse";
+			};
+			name = Debug;
+		};
+		2D634571521A62F9A1026B62 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				INFOPLIST_FILE = DriveVerse/Resources/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.praveet.driveverse;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		6F2D4325AA48355B99EFF6A9 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				INFOPLIST_FILE = DriveVerseWidgets/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.praveet.driveverse.widgets;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		B1DE441EF5B56D18B39E16BD /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
+				MARKETING_VERSION = 1.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Release;
+		};
+		BE627E1AD39C79BC2262F83E /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.praveet.DriveVerseTests;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/DriveVerse.app/DriveVerse";
+			};
+			name = Release;
+		};
+		DD1FCA8AD0B2F9F6FF342A61 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				INFOPLIST_FILE = DriveVerse/Resources/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.praveet.driveverse;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		E875805E9FE0CBB9CC88C87E /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				INFOPLIST_FILE = DriveVerseWidgets/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.praveet.driveverse.widgets;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		20FB9087FFC943A30DD12F9E /* Build configuration list for PBXProject "DriveVerse" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				0D1C9800BE5E278CC924DD2D /* Debug */,
+				B1DE441EF5B56D18B39E16BD /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		332D03AA9BFDA67BC14917DA /* Build configuration list for PBXNativeTarget "DriveVerseWidgets" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				E875805E9FE0CBB9CC88C87E /* Debug */,
+				6F2D4325AA48355B99EFF6A9 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		478F5F24EDB9FF554FD72313 /* Build configuration list for PBXNativeTarget "DriveVerse" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				2D634571521A62F9A1026B62 /* Debug */,
+				DD1FCA8AD0B2F9F6FF342A61 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		79F5F53CBFCD9B0700CBE226 /* Build configuration list for PBXNativeTarget "DriveVerseTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				289D5E286BA17746E1447923 /* Debug */,
+				BE627E1AD39C79BC2262F83E /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 0058046BB6DF7D963E382CA3 /* Project object */;
+}
