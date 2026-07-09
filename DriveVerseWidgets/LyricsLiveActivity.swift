@@ -79,24 +79,27 @@ struct LockScreenLyricsView: View {
     }
 
     /// CarPlay tile / Watch Smart Stack: no room for meta chrome — the
-    /// lyric IS the content. Two rows plus progress, high contrast (§5).
+    /// lyric IS the content. Two rows, high contrast. No progress bar:
+    /// an observer app can't seek, so it would never be interactive and
+    /// only steals space from the lyric.
     private var smallBody: some View {
         VStack(alignment: .leading, spacing: 4) {
             Text(context.state.currentLine)
-                .font(.headline.bold())
+                .font(.title3.bold())
                 .lineLimit(2)
-                .minimumScaleFactor(0.8)
+                .minimumScaleFactor(0.7)
+                .contentTransition(.opacity)
                 .frame(maxWidth: .infinity, alignment: .leading)
 
             Text(context.state.nextLine)
-                .font(.caption)
+                .font(.caption2)
                 .foregroundStyle(.secondary)
                 .lineLimit(1)
-
-            ProgressView(value: context.state.progress)
-                .tint(.white.opacity(0.85))
+                .id(context.state.nextLine)
+                .transition(.push(from: .bottom))
         }
         .padding(10)
+        .animation(.smooth(duration: 0.5), value: context.state)
     }
 
     private var mediumBody: some View {
