@@ -35,9 +35,17 @@ targets:
           - CFBundleURLName: com.praveet.driveverse.auth
             CFBundleURLSchemes: [driveverse]
         UILaunchScreen: {}
+        # iPhone stays portrait-only. The complete ~ipad set satisfies
+        # Xcode's "all orientations" check without the deprecated
+        # UIRequiresFullScreen key (TN3192); this iPhone-only app runs on
+        # iPad only in compatibility mode, where that set never applies.
         UISupportedInterfaceOrientations:
           - UIInterfaceOrientationPortrait
-        UIRequiresFullScreen: true
+        UISupportedInterfaceOrientations~ipad:
+          - UIInterfaceOrientationPortrait
+          - UIInterfaceOrientationPortraitUpsideDown
+          - UIInterfaceOrientationLandscapeLeft
+          - UIInterfaceOrientationLandscapeRight
         ITSAppUsesNonExemptEncryption: false
     dependencies:
       - target: DriveVerseWidgets

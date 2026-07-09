@@ -370,10 +370,17 @@ final class SpotifyAuth: NSObject, ObservableObject {
 #if os(iOS)
 private final class WebAuthPresenter: NSObject, ASWebAuthenticationPresentationContextProviding {
     func presentationAnchor(for session: ASWebAuthenticationSession) -> ASPresentationAnchor {
-        UIApplication.shared.connectedScenes
-            .compactMap { $0 as? UIWindowScene }
-            .flatMap(\.windows)
-            .first { $0.isKeyWindow } ?? ASPresentationAnchor()
+        let scenes = UIApplication.shared.connectedScenes.compactMap { $0 as? UIWindowScene }
+        let windows = scenes.flatMap(\.windows)
+        if let anchor = windows.first(where: \.isKeyWindow) ?? windows.first {
+            return anchor
+        }
+        guard let scene = scenes.first else {
+            // Unreachable: connect() is user-initiated from a visible UI,
+            // so a window scene always exists by the time this runs.
+            preconditionFailure("No UIWindowScene available to present Spotify auth")
+        }
+        return ASPresentationAnchor(windowScene: scene)
     }
 }
 #endif
