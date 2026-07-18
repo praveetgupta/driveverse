@@ -1,6 +1,9 @@
 import Foundation
 import Combine
 import os
+#if canImport(ActivityKit)
+import ActivityKit
+#endif
 
 enum LyricsDisplayState: Equatable {
     case idle       // nothing playing yet
@@ -39,6 +42,14 @@ final class AppModel: ObservableObject {
         didSet {
 #if os(iOS)
             liveActivity.holdWhilePaused = driveMode
+#if canImport(ActivityKit)
+            // Without this Settings toggle the frequent-updates Info.plist
+            // key is inert and ActivityKit's standard budget silently
+            // freezes the tile after roughly a minute of lyric updates.
+            if driveMode, !ActivityAuthorizationInfo().frequentPushesEnabled {
+                errorMessage = "For smooth lyrics, turn on Settings → DriveVerse → Live Activities → More Frequent Updates."
+            }
+#endif
 #endif
             syncLiveActivity()
         }
@@ -279,22 +290,28 @@ final class AppModel: ObservableObject {
                     let lines = LRCParser.parse(raw)
                     if lines.isEmpty {
                         self.lyricsState = .notFound
+                        Self.log.notice("lyrics: synced-but-empty for \(state.title.prefix(12), privacy: .public)")
                     } else {
                         self.lyricsState = .synced(lines)
                         self.syncEngine.setLyrics(lines)
+                        Self.log.notice("lyrics: synced, \(lines.count) lines for \(state.title.prefix(12), privacy: .public)")
                     }
                 case .plain(let text):
                     self.lyricsState = .plain(text)
+                    Self.log.notice("lyrics: plain-only for \(state.title.prefix(12), privacy: .public)")
                 case .instrumental:
                     self.lyricsState = .instrumental
+                    Self.log.notice("lyrics: instrumental for \(state.title.prefix(12), privacy: .public)")
                 case .notFound:
                     self.lyricsState = .notFound
+                    Self.log.notice("lyrics: not found for \(state.title.prefix(12), privacy: .public)")
                 }
             } catch is CancellationError {
                 // superseded by a newer track — nothing to do
             } catch {
                 guard !Task.isCancelled else { return }
                 self.lyricsState = .failed
+                Self.log.warning("lyrics fetch failed for \(state.title.prefix(12), privacy: .public): \(error.localizedDescription, privacy: .public)")
             }
         }
     }

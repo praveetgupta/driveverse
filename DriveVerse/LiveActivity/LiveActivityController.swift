@@ -2,6 +2,7 @@ import Foundation
 
 #if os(iOS) && canImport(ActivityKit)
 import ActivityKit
+import os
 
 /// Owns the lyrics Live Activity lifecycle.
 ///
@@ -16,10 +17,21 @@ import ActivityKit
 @MainActor
 final class LiveActivityController {
     static let endDelay: TimeInterval = 30
+    /// Line-change updates are folded to at most one per this interval so
+    /// rapid lines (choruses) don't drain the ActivityKit update budget —
+    /// budget exhaustion silently freezes the tile. Track changes and
+    /// play/pause flips always go through.
+    static let minLineUpdateInterval: TimeInterval = 3
+
+    private static let log = Logger(subsystem: "com.praveet.driveverse", category: "activity")
 
     private var activity: Activity<LyricsAttributes>?
     private var policy = LiveActivityUpdatePolicy()
     private var endTask: Task<Void, Never>?
+    private var stateWatcher: Task<Void, Never>?
+    private var lastUpdateAt: Date?
+    private var lastSentTrackKey: String?
+    private var lastSentIsPlaying: Bool?
 
     /// Drive Mode's keep-alive only runs while an activity is actually up.
     var isActive: Bool { activity != nil }
@@ -62,15 +74,25 @@ final class LiveActivityController {
             scheduleEnd()
         }
 
-        if policy.shouldUpdate(
-            trackKey: Self.key(for: state),
+        let key = Self.key(for: state)
+        guard policy.shouldUpdate(
+            trackKey: key,
             lineIndex: position?.lineIndex,
             isPlaying: state.isPlaying
-        ) {
-            let content = Self.content(state: state, position: position)
-            Task {
-                await activity.update(ActivityContent(state: content, staleDate: nil))
-            }
+        ) else { return }
+
+        let critical = key != lastSentTrackKey || state.isPlaying != lastSentIsPlaying
+        if !critical, let last = lastUpdateAt,
+           Date().timeIntervalSince(last) < Self.minLineUpdateInterval {
+            return // folded — the next line change lands in a few seconds
+        }
+        lastUpdateAt = Date()
+        lastSentTrackKey = key
+        lastSentIsPlaying = state.isPlaying
+        Self.log.notice("update (line \(position?.lineIndex.map(String.init) ?? "-", privacy: .public), \(String(key.prefix(12)), privacy: .public))")
+        let content = Self.content(state: state, position: position)
+        Task {
+            await activity.update(ActivityContent(state: content, staleDate: nil))
         }
     }
 
@@ -88,30 +110,60 @@ final class LiveActivityController {
                 progress: 0, isPlaying: false
             )
         do {
-            activity = try Activity.request(
+            let requested = try Activity.request(
                 attributes: LyricsAttributes(),
                 content: ActivityContent(state: content, staleDate: nil)
             )
+            activity = requested
+            Self.log.notice("activity requested OK (id \(String(requested.id.prefix(8)), privacy: .public), frequent updates enabled: \(ActivityAuthorizationInfo().frequentPushesEnabled, privacy: .public))")
+            watch(requested)
+            lastUpdateAt = Date()
             if let state {
+                lastSentTrackKey = Self.key(for: state)
+                lastSentIsPlaying = state.isPlaying
                 policy.seed(
                     trackKey: Self.key(for: state),
                     lineIndex: position?.lineIndex,
                     isPlaying: state.isPlaying
                 )
             } else {
+                lastSentTrackKey = nil
+                lastSentIsPlaying = nil
                 policy.reset()
             }
         } catch {
+            Self.log.error("Activity.request failed: \(error.localizedDescription, privacy: .public)")
             activity = nil
+        }
+    }
+
+    /// The system can end or dismiss the activity without asking us (user
+    /// swipe, system policy). Without this watcher we'd keep "updating" a
+    /// corpse while believing everything is fine.
+    private func watch(_ requested: Activity<LyricsAttributes>) {
+        stateWatcher?.cancel()
+        stateWatcher = Task { [weak self] in
+            for await state in requested.activityStateUpdates {
+                Self.log.notice("activity state → \(String(describing: state), privacy: .public)")
+                guard let self, state == .ended || state == .dismissed else { continue }
+                if self.activity?.id == requested.id {
+                    self.activity = nil
+                    self.policy.reset()
+                    Self.log.warning("activity ended outside the app — background restart impossible; reopen the app or rerun the CarPlay automation")
+                }
+            }
         }
     }
 
     func endNow() async {
         endTask?.cancel()
         endTask = nil
+        stateWatcher?.cancel()
+        stateWatcher = nil
         guard let activity else { return }
         self.activity = nil
         policy.reset()
+        Self.log.notice("activity ended by app")
         await activity.end(nil, dismissalPolicy: .immediate)
     }
 
