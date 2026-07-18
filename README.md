@@ -125,13 +125,38 @@ Drive Mode keeps DriveVerse alive by playing a **silent, muted audio loop**
 (`AVAudioSession` category `.playback` with `.mixWithOthers`, so it never
 ducks or interrupts your music) via the `audio` background mode.
 
-- It only runs while Drive Mode is toggled on **and** a lyrics Live Activity
-  is active; it stops as soon as either ends.
-- It costs some battery — that's why it's an explicit opt-in toggle.
+- It runs for as long as Drive Mode is toggled on — including through pauses
+  of any length. This is deliberate: a suspended app can neither detect the
+  resume nor restart the Live Activity from the background, so "pause for
+  half an hour, get back in, press play in Apple Music" only works if the
+  process stayed alive. The Live Activity is likewise held (pause glyph)
+  instead of ending 30 s after playback stops.
+- It costs some battery — that's why it's an explicit opt-in toggle. Use the
+  CarPlay automation below so it switches off when you leave the car.
 - **App Store:** this technique is acceptable for a personally sideloaded
   build but would be rejected in App Review (silent audio to stay alive is
   explicitly disallowed). A store build would need a different approach
   (e.g. push-updated Live Activities from a server).
+
+### Hands-free: start/stop with the car automatically
+
+DriveVerse ships two App Shortcuts — **Start Drive Mode** and **Stop Drive
+Mode** — meant for Shortcuts personal automations, so you never have to open
+the app in the car:
+
+1. Open **Shortcuts → Automation → + → CarPlay** (or **Bluetooth** and pick
+   the car stereo, for non-CarPlay cars).
+2. "When CarPlay connects" → **Run Immediately** (no confirmation) → add the
+   **Start Drive Mode** action from DriveVerse.
+3. Add a second automation: "When CarPlay disconnects" → **Stop Drive Mode**.
+
+Connecting to the car then launches DriveVerse in the background, turns
+Drive Mode on, and starts the Live Activity right away — as a
+"♪ Waiting for music…" placeholder if nothing is playing yet. The
+placeholder matters: iOS only lets a backgrounded app *update* an existing
+activity (starting one needs the foreground or an App Intent grant), so the
+tile must exist before the first track change. Disconnecting turns Drive
+Mode off so the keep-alive never outlives the trip.
 
 ## Manual test checklists (real device)
 
@@ -182,6 +207,12 @@ ducks or interrupts your music) via the `audio` background mode.
       the Live Activity follows within ~1 s.
 - [ ] Reopen the app after a long background stretch → the lyric line snaps
       to the correct position immediately (foreground resync).
+- [ ] Pause for several minutes with Drive Mode on, phone locked → the tile
+      stays (pause glyph); resuming from Apple Music/Spotify without opening
+      DriveVerse picks the lyrics back up within a poll interval.
+- [ ] CarPlay automation: connecting runs Start Drive Mode (tile appears,
+      placeholder if nothing is playing); disconnecting runs Stop Drive Mode
+      (tile ends, keep-alive stops).
 
 ## Known limitations
 

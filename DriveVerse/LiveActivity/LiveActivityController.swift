@@ -24,6 +24,11 @@ final class LiveActivityController {
     /// Drive Mode's keep-alive only runs while an activity is actually up.
     var isActive: Bool { activity != nil }
 
+    /// While Drive Mode is on the session must survive arbitrary pauses:
+    /// hold the activity (pause glyph) instead of ending it after the grace
+    /// period, because a fresh start would need the foreground.
+    var holdWhilePaused = false
+
     init() {
         // Clean up activities orphaned by a previous app termination.
         Task {
@@ -36,7 +41,7 @@ final class LiveActivityController {
     /// Single entry point, called from AppModel on every state/position change.
     func sync(state: NowPlayingState?, position: LyricsPosition?, hasSyncedLyrics: Bool) {
         guard let state else {
-            scheduleEnd()
+            if holdWhilePaused { cancelScheduledEnd() } else { scheduleEnd() }
             return
         }
 
@@ -44,26 +49,14 @@ final class LiveActivityController {
             // First start needs a playing track with synced lyrics and a
             // foregrounded app — the request throws in the background and is
             // simply retried on a later sync (heals on foreground resync).
-            guard state.isPlaying, hasSyncedLyrics,
-                  ActivityAuthorizationInfo().areActivitiesEnabled else { return }
-            let content = Self.content(state: state, position: position)
-            do {
-                self.activity = try Activity.request(
-                    attributes: LyricsAttributes(),
-                    content: ActivityContent(state: content, staleDate: nil)
-                )
-                policy.seed(
-                    trackKey: Self.key(for: state),
-                    lineIndex: position?.lineIndex,
-                    isPlaying: state.isPlaying
-                )
-            } catch {
-                self.activity = nil
+            // The Start Drive Mode intent bypasses this via beginSession.
+            if state.isPlaying, hasSyncedLyrics {
+                beginSession(state: state, position: position)
             }
             return
         }
 
-        if state.isPlaying {
+        if state.isPlaying || holdWhilePaused {
             cancelScheduledEnd()
         } else {
             scheduleEnd()
@@ -78,6 +71,38 @@ final class LiveActivityController {
             Task {
                 await activity.update(ActivityContent(state: content, staleDate: nil))
             }
+        }
+    }
+
+    /// Requests the session's activity. Reached two ways: from sync() once a
+    /// lyric-bearing track plays in the foreground, or from the Start Drive
+    /// Mode intent — the one background context iOS grants Activity.request
+    /// to. The intent path may run before any music plays; the placeholder
+    /// content matters because a background app can only *update* from then on.
+    func beginSession(state: NowPlayingState?, position: LyricsPosition?) {
+        guard activity == nil, ActivityAuthorizationInfo().areActivitiesEnabled else { return }
+        let content = state.map { Self.content(state: $0, position: position) }
+            ?? LyricsAttributes.ContentState(
+                title: "DriveVerse", artist: "", sourceName: "",
+                currentLine: "♪ Waiting for music…", nextLine: "",
+                progress: 0, isPlaying: false
+            )
+        do {
+            activity = try Activity.request(
+                attributes: LyricsAttributes(),
+                content: ActivityContent(state: content, staleDate: nil)
+            )
+            if let state {
+                policy.seed(
+                    trackKey: Self.key(for: state),
+                    lineIndex: position?.lineIndex,
+                    isPlaying: state.isPlaying
+                )
+            } else {
+                policy.reset()
+            }
+        } catch {
+            activity = nil
         }
     }
 

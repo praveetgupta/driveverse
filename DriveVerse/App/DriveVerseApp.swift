@@ -3,7 +3,7 @@ import SwiftUI
 
 @main
 struct DriveVerseApp: App {
-    @StateObject private var model = AppModel()
+    private let model = AppModel.shared
     @Environment(\.scenePhase) private var scenePhase
 
     var body: some Scene {

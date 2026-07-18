@@ -15,6 +15,11 @@ enum LyricsDisplayState: Equatable {
 /// and Live Activity. (Drive Mode keep-alive is added in Phase 7.)
 @MainActor
 final class AppModel: ObservableObject {
+    /// Single shared instance: the SwiftUI scene and the Drive Mode App
+    /// Intents (which can launch the process in the background) must drive
+    /// the same pipeline.
+    static let shared = AppModel()
+
     static let pollIntervalKey = "spotifyPollInterval"
     static let sourcePinKey = "sourcePin"
 
@@ -28,7 +33,12 @@ final class AppModel: ObservableObject {
     @Published private(set) var spotifyNeedsReconnect = false
     @Published var errorMessage: String?
     @Published var driveMode = false {
-        didSet { updateKeepAlive() }
+        didSet {
+#if os(iOS)
+            liveActivity.holdWhilePaused = driveMode
+#endif
+            syncLiveActivity()
+        }
     }
 
     var sourcePin: SourcePin {
@@ -107,6 +117,29 @@ final class AppModel: ObservableObject {
         appleSource.refresh()
 #endif
         spotifySource.pollNow()
+    }
+
+    /// Entry point for the Start Drive Mode intent. May run with the app
+    /// launched straight into the background, where the LiveActivityIntent
+    /// grant is the only legal way to request an activity — so one is started
+    /// immediately (a placeholder until music plays); everything after that
+    /// is a plain background update.
+    func startDriveSession() {
+#if os(iOS)
+        start()
+        liveActivity.beginSession(state: nowPlaying, position: position)
+        driveMode = true
+        foregroundResync()
+#endif
+    }
+
+    /// Entry point for the Stop Drive Mode intent (leaving the car): stop
+    /// holding the session and take the tile down right away.
+    func stopDriveSession() {
+        driveMode = false
+#if os(iOS)
+        Task { await liveActivity.endNow() }
+#endif
     }
 
     // MARK: Actions
@@ -204,11 +237,16 @@ final class AppModel: ObservableObject {
 #endif
     }
 
-    /// Per CLAUDE.md §6: the silent-audio keep-alive runs only while Drive
-    /// Mode is on AND a Live Activity is active — never as a background default.
+    /// Deviation from CLAUDE.md §6 (owner's decision): Drive Mode now means
+    /// "stay awake until toggled off", not "awake only while an activity is
+    /// up" — pauses of any length (parking, calls, coffee stops) must survive
+    /// without reopening the app, because a suspended app can neither detect
+    /// the resume nor re-request the activity from the background. Battery
+    /// cost stays opt-in; the CarPlay automation (README) turns Drive Mode
+    /// off when leaving the car.
     private func updateKeepAlive() {
 #if os(iOS)
-        let shouldRun = driveMode && liveActivity.isActive
+        let shouldRun = driveMode
         if shouldRun && !backgroundKeeper.isRunning {
             do {
                 try backgroundKeeper.start()
