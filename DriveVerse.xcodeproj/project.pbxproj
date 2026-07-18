@@ -15,12 +15,14 @@
 		11A91552214C2699864D16CC /* ScaffoldTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7266FA38ED9709457C305111 /* ScaffoldTests.swift */; };
 		17DE808D5CB7D9375AA5F2FF /* LyricsLiveActivity.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6BF21625B40AD357F50F13E /* LyricsLiveActivity.swift */; };
 		1AD8F43DCAFB56CD772B2B29 /* BackgroundKeeper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18E5FB7A2516764DD3D734E4 /* BackgroundKeeper.swift */; };
+		1C6B7DDB918364888598725E /* Transliterator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C344EA45D94C24E3372C435 /* Transliterator.swift */; };
 		1CB36F32CE5204FC2FE1A5F9 /* Secrets.plist in Resources */ = {isa = PBXBuildFile; fileRef = 7FC644467C30F4EDDECAC0C9 /* Secrets.plist */; };
 		2090FCA711071F940A2FC238 /* LyricsMatcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = EDB4D8EC98363806ED4367C8 /* LyricsMatcher.swift */; };
 		262C9781DDCAA5945536FE64 /* NowPlayingCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 191A3C57E8CCD995324E3DE0 /* NowPlayingCoordinator.swift */; };
 		27EE35BFA39B03A7D707CCD5 /* LyricsAttributes.swift in Sources */ = {isa = PBXBuildFile; fileRef = B7D50CB10C457B5FDA5C18A4 /* LyricsAttributes.swift */; };
 		3144255AF5A7332A8DC1E6CB /* LiveActivityThrottleTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 519AFBF581C59568D1BC6BCB /* LiveActivityThrottleTests.swift */; };
 		3850C33B60081FB30D645855 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 96FBECE39D05D602D1D21998 /* Assets.xcassets */; };
+		435B627E39BF96A092465F41 /* TransliteratorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 751D649ABA7EA56CCE1096E0 /* TransliteratorTests.swift */; };
 		45B35ED49CD2C195FD66CC96 /* LRCLIBClientTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED260159BBFBE6E21D3E96F0 /* LRCLIBClientTests.swift */; };
 		4CECC61AC61FF6C56E16CDEE /* LyricsMatcherTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE5806DC04680356D910CB26 /* LyricsMatcherTests.swift */; };
 		60727B17611118FEE4136983 /* LyricsAttributes.swift in Sources */ = {isa = PBXBuildFile; fileRef = B7D50CB10C457B5FDA5C18A4 /* LyricsAttributes.swift */; };
@@ -89,11 +91,13 @@
 		1FAFE0BD274A8225F8B15A4B /* AppleMusicSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppleMusicSource.swift; sourceTree = "<group>"; };
 		328E027729B5A93D39068C7C /* Secrets.example.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Secrets.example.plist; sourceTree = "<group>"; };
 		33748827FA1F2961B39583A6 /* LRCParserTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LRCParserTests.swift; sourceTree = "<group>"; };
+		3C344EA45D94C24E3372C435 /* Transliterator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Transliterator.swift; sourceTree = "<group>"; };
 		4BD201D0AF5AAE7D65D255FF /* DriveVerseApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DriveVerseApp.swift; sourceTree = "<group>"; };
 		519AFBF581C59568D1BC6BCB /* LiveActivityThrottleTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiveActivityThrottleTests.swift; sourceTree = "<group>"; };
 		59FA7AA57D661AB7A26BF4DF /* LiveActivityController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiveActivityController.swift; sourceTree = "<group>"; };
 		61126F206FA27DEAF30E275A /* LiveActivityUpdatePolicy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiveActivityUpdatePolicy.swift; sourceTree = "<group>"; };
 		7266FA38ED9709457C305111 /* ScaffoldTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScaffoldTests.swift; sourceTree = "<group>"; };
+		751D649ABA7EA56CCE1096E0 /* TransliteratorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransliteratorTests.swift; sourceTree = "<group>"; };
 		7778707E92D6356CE39C3C67 /* CoordinatorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoordinatorTests.swift; sourceTree = "<group>"; };
 		7B07BCDA93210C8926EFC189 /* LRCParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LRCParser.swift; sourceTree = "<group>"; };
 		7FC644467C30F4EDDECAC0C9 /* Secrets.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Secrets.plist; sourceTree = "<group>"; };
@@ -179,6 +183,7 @@
 				82690FC4252741DBC09DB3C1 /* SpotifyAuthTests.swift */,
 				BCA7F680E5F709BA7D68C636 /* SpotifySourceTests.swift */,
 				8F4833029C28CE94E1B93117 /* SyncEngineTests.swift */,
+				751D649ABA7EA56CCE1096E0 /* TransliteratorTests.swift */,
 			);
 			path = DriveVerseTests;
 			sourceTree = "<group>";
@@ -191,6 +196,7 @@
 				E4587993C109AD281E415EF9 /* LyricsCache.swift */,
 				EDB4D8EC98363806ED4367C8 /* LyricsMatcher.swift */,
 				CE443411721188CA1CD78AEB /* LyricsService.swift */,
+				3C344EA45D94C24E3372C435 /* Transliterator.swift */,
 			);
 			path = Lyrics;
 			sourceTree = "<group>";
@@ -441,6 +447,7 @@
 				8529D614A1619C2F9E88124C /* SpotifyAuthTests.swift in Sources */,
 				7B560BB37413F13CD2C2A307 /* SpotifySourceTests.swift in Sources */,
 				632FB0A9869AD363AEF1B1B2 /* SyncEngineTests.swift in Sources */,
+				435B627E39BF96A092465F41 /* TransliteratorTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -479,6 +486,7 @@
 				FC14F3DF93F070781BA7B1BA /* SpotifyAuth.swift in Sources */,
 				EF2C3EC57DE5B6C669EFD9F5 /* SpotifySource.swift in Sources */,
 				041F2522B3ED8825FF6F9CB0 /* SyncEngine.swift in Sources */,
+				1C6B7DDB918364888598725E /* Transliterator.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

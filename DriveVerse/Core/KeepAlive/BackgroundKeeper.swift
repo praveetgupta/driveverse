@@ -37,8 +37,11 @@ final class BackgroundKeeper: NSObject, CLLocationManagerDelegate {
     override init() {
         super.init()
         manager.delegate = self
-        manager.desiredAccuracy = kCLLocationAccuracyKilometer
-        manager.distanceFilter = 500
+        // Cheapest possible session: cell-tower accuracy, no GPS spin-up.
+        // The session's existence is what keeps the app alive — the fixes
+        // themselves are discarded, so precision buys nothing but battery.
+        manager.desiredAccuracy = kCLLocationAccuracyThreeKilometers
+        manager.distanceFilter = 1_000
         manager.pausesLocationUpdatesAutomatically = false
         manager.activityType = .automotiveNavigation
     }

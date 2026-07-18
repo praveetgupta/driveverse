@@ -296,7 +296,9 @@ final class AppModel: ObservableObject {
                 guard !Task.isCancelled else { return }
                 switch result {
                 case .synced(let raw):
-                    let lines = LRCParser.parse(raw)
+                    let lines = LRCParser.parse(raw).map {
+                        LRCLine(timeMs: $0.timeMs, text: Transliterator.latinized($0.text))
+                    }
                     if lines.isEmpty {
                         self.lyricsState = .notFound
                         Self.log.notice("lyrics: synced-but-empty for \(state.title.prefix(12), privacy: .public)")
@@ -306,7 +308,7 @@ final class AppModel: ObservableObject {
                         Self.log.notice("lyrics: synced, \(lines.count) lines for \(state.title.prefix(12), privacy: .public)")
                     }
                 case .plain(let text):
-                    self.lyricsState = .plain(text)
+                    self.lyricsState = .plain(Transliterator.latinized(text))
                     Self.log.notice("lyrics: plain-only for \(state.title.prefix(12), privacy: .public)")
                 case .instrumental:
                     self.lyricsState = .instrumental

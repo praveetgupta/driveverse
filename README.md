@@ -71,6 +71,9 @@ cp DriveVerse/Resources/Secrets.example.plist DriveVerse/Resources/Secrets.plist
 ```
 
 `Secrets.plist` is gitignored; never commit it or hardcode the ID.
+**This step is required before the first build** — the project references
+`Secrets.plist`, so a fresh clone fails to compile until the file exists
+(leave the placeholder value in if you don't use Spotify).
 
 ### 3. Build & run
 
@@ -86,7 +89,30 @@ open DriveVerse.xcodeproj
 ### 4. Permissions on first launch
 
 - **Media & Apple Music** access — required for Apple Music detection.
-- **Live Activities** — enable for DriveVerse in Settings if prompted.
+- **Live Activities** — enable for DriveVerse in Settings if prompted, and
+  keep **More Frequent Updates** on (Settings → DriveVerse → Live
+  Activities) or lyric updates get throttled after ~30 s in the background.
+- **Location, While Using** — requested when you first toggle Drive Mode;
+  it's the background keep-alive (see below). Accept the later "Always"
+  upgrade only if you want the CarPlay automation to work with the app
+  closed.
+
+## Privacy & data
+
+Everything stays on the device; there is no backend, no account, and no
+analytics.
+
+- Now-playing metadata is read locally (MediaPlayer) or fetched from your
+  own Spotify account over HTTPS; only normalized track title/artist/album/
+  duration are sent to LRCLIB to look up lyrics.
+- Spotify tokens live in the Keychain (after-first-unlock accessibility, so
+  Drive Mode can refresh them while the phone is locked).
+- Lyrics are cached on-disk for at most 30 days; Settings → Clear cache
+  wipes them.
+- Drive Mode's location fixes are discarded the moment they arrive — nothing
+  is stored, logged persistently, or transmitted.
+- Non-Latin lyrics are transliterated to Latin letters on-device (ICU); no
+  text ever leaves the phone for that.
 
 ## Running the tests
 

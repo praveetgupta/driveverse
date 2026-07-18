@@ -40,7 +40,6 @@ enum AppleMusicStateMapper {
 
 #if os(iOS)
 import MediaPlayer
-import MusicKit
 import os
 
 /// Observes the system (Apple Music) player via the MediaPlayer framework.
@@ -121,22 +120,14 @@ final class AppleMusicSource: NowPlayingSource {
     private static let diag = Logger(subsystem: "com.praveet.driveverse", category: "nowplaying")
     private var tickCount = 0
 
-    /// Every 10 s, log what BOTH playback APIs report. Diagnosis for the
-    /// backgrounded freeze: if MusicKit stays fresh while MediaPlayer's
-    /// answers stop moving, the source needs to switch APIs.
+    /// Every 10 s, log what the player reports — background-health evidence
+    /// in Console.app at zero extra cost (same values emit() just read).
     private func logDiagnostics() {
         tickCount += 1
         guard tickCount % 10 == 0 else { return }
-
-        let mpTitle = player.nowPlayingItem?.title?.prefix(12) ?? "nil"
-        let mpPos = String(format: "%.1f", player.currentPlaybackTime)
-        Self.diag.notice("MP: item=\(String(mpTitle), privacy: .public) pos=\(mpPos, privacy: .public) state=\(self.player.playbackState.rawValue, privacy: .public)")
-
-        let mk = SystemMusicPlayer.shared
-        let mkTitle = mk.queue.currentEntry?.title.prefix(12) ?? "nil"
-        let mkPos = String(format: "%.1f", mk.playbackTime)
-        let mkStatus = String(describing: mk.state.playbackStatus)
-        Self.diag.notice("MK: item=\(String(mkTitle), privacy: .public) pos=\(mkPos, privacy: .public) status=\(mkStatus, privacy: .public)")
+        let title = player.nowPlayingItem?.title?.prefix(12) ?? "nil"
+        let pos = String(format: "%.1f", player.currentPlaybackTime)
+        Self.diag.notice("MP: item=\(String(title), privacy: .public) pos=\(pos, privacy: .public) state=\(self.player.playbackState.rawValue, privacy: .public)")
     }
 
     /// Foreground resync: read the player immediately instead of waiting for
