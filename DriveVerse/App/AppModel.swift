@@ -1,5 +1,6 @@
 import Foundation
 import Combine
+import os
 
 enum LyricsDisplayState: Equatable {
     case idle       // nothing playing yet
@@ -22,6 +23,8 @@ final class AppModel: ObservableObject {
 
     static let pollIntervalKey = "spotifyPollInterval"
     static let sourcePinKey = "sourcePin"
+
+    private static let log = Logger(subsystem: "com.praveet.driveverse", category: "pipeline")
 
     // MARK: UI state
 
@@ -221,6 +224,7 @@ final class AppModel: ObservableObject {
         )
         if signature != currentSignature {
             currentSignature = signature
+            Self.log.notice("track change detected: \(state.title.prefix(12), privacy: .public) [\(state.source == .appleMusic ? "AM" : "SP", privacy: .public)]")
             fetchLyrics(for: state)
         }
         syncLiveActivity()
