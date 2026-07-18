@@ -19,6 +19,7 @@
 		2090FCA711071F940A2FC238 /* LyricsMatcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = EDB4D8EC98363806ED4367C8 /* LyricsMatcher.swift */; };
 		262C9781DDCAA5945536FE64 /* NowPlayingCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 191A3C57E8CCD995324E3DE0 /* NowPlayingCoordinator.swift */; };
 		27EE35BFA39B03A7D707CCD5 /* LyricsAttributes.swift in Sources */ = {isa = PBXBuildFile; fileRef = B7D50CB10C457B5FDA5C18A4 /* LyricsAttributes.swift */; };
+		3144255AF5A7332A8DC1E6CB /* LiveActivityThrottleTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 519AFBF581C59568D1BC6BCB /* LiveActivityThrottleTests.swift */; };
 		3850C33B60081FB30D645855 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 96FBECE39D05D602D1D21998 /* Assets.xcassets */; };
 		45B35ED49CD2C195FD66CC96 /* LRCLIBClientTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED260159BBFBE6E21D3E96F0 /* LRCLIBClientTests.swift */; };
 		4CECC61AC61FF6C56E16CDEE /* LyricsMatcherTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE5806DC04680356D910CB26 /* LyricsMatcherTests.swift */; };
@@ -39,6 +40,7 @@
 		BA2D3E1E68FA87168F46FF1E /* LRCLIBClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4688F2973765498FC251906 /* LRCLIBClient.swift */; };
 		BAB34E02616B243EE8DA0FD5 /* LRCParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B07BCDA93210C8926EFC189 /* LRCParser.swift */; };
 		D2FD9EF9591DD5197DED9E0D /* DriveVerseWidgets.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = B5032A3403B70D48EC541330 /* DriveVerseWidgets.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		D61EF3B7D29FC1F1721DDB9C /* LiveActivityUpdateThrottle.swift in Sources */ = {isa = PBXBuildFile; fileRef = DCE278CB74AAABCD52C0E9D1 /* LiveActivityUpdateThrottle.swift */; };
 		D8ED58A7DEE2EEA11B49F7BC /* LyricsCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4587993C109AD281E415EF9 /* LyricsCache.swift */; };
 		E65836D2791CB7B558C760C6 /* LiveActivityPolicyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 13E381F38AE762E88B34AF9A /* LiveActivityPolicyTests.swift */; };
 		EC4BE5FAA9921628AC3A2D0C /* AppModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDD7A295A0865928BA32F559 /* AppModel.swift */; };
@@ -88,6 +90,7 @@
 		328E027729B5A93D39068C7C /* Secrets.example.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Secrets.example.plist; sourceTree = "<group>"; };
 		33748827FA1F2961B39583A6 /* LRCParserTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LRCParserTests.swift; sourceTree = "<group>"; };
 		4BD201D0AF5AAE7D65D255FF /* DriveVerseApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DriveVerseApp.swift; sourceTree = "<group>"; };
+		519AFBF581C59568D1BC6BCB /* LiveActivityThrottleTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiveActivityThrottleTests.swift; sourceTree = "<group>"; };
 		59FA7AA57D661AB7A26BF4DF /* LiveActivityController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiveActivityController.swift; sourceTree = "<group>"; };
 		61126F206FA27DEAF30E275A /* LiveActivityUpdatePolicy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiveActivityUpdatePolicy.swift; sourceTree = "<group>"; };
 		7266FA38ED9709457C305111 /* ScaffoldTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScaffoldTests.swift; sourceTree = "<group>"; };
@@ -114,6 +117,7 @@
 		D230740C807DAFF0C3A621ED /* SpotifySource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpotifySource.swift; sourceTree = "<group>"; };
 		D4688F2973765498FC251906 /* LRCLIBClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LRCLIBClient.swift; sourceTree = "<group>"; };
 		DA064D09A1101784EEF1ECE4 /* LyricsCacheTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LyricsCacheTests.swift; sourceTree = "<group>"; };
+		DCE278CB74AAABCD52C0E9D1 /* LiveActivityUpdateThrottle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiveActivityUpdateThrottle.swift; sourceTree = "<group>"; };
 		E4587993C109AD281E415EF9 /* LyricsCache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LyricsCache.swift; sourceTree = "<group>"; };
 		ED260159BBFBE6E21D3E96F0 /* LRCLIBClientTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LRCLIBClientTests.swift; sourceTree = "<group>"; };
 		EDB4D8EC98363806ED4367C8 /* LyricsMatcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LyricsMatcher.swift; sourceTree = "<group>"; };
@@ -166,6 +170,7 @@
 				FBDAA6D02D67EAC13330BF88 /* AppleMusicMapperTests.swift */,
 				7778707E92D6356CE39C3C67 /* CoordinatorTests.swift */,
 				13E381F38AE762E88B34AF9A /* LiveActivityPolicyTests.swift */,
+				519AFBF581C59568D1BC6BCB /* LiveActivityThrottleTests.swift */,
 				ED260159BBFBE6E21D3E96F0 /* LRCLIBClientTests.swift */,
 				33748827FA1F2961B39583A6 /* LRCParserTests.swift */,
 				DA064D09A1101784EEF1ECE4 /* LyricsCacheTests.swift */,
@@ -240,6 +245,7 @@
 			children = (
 				59FA7AA57D661AB7A26BF4DF /* LiveActivityController.swift */,
 				61126F206FA27DEAF30E275A /* LiveActivityUpdatePolicy.swift */,
+				DCE278CB74AAABCD52C0E9D1 /* LiveActivityUpdateThrottle.swift */,
 				B7D50CB10C457B5FDA5C18A4 /* LyricsAttributes.swift */,
 			);
 			path = LiveActivity;
@@ -428,6 +434,7 @@
 				45B35ED49CD2C195FD66CC96 /* LRCLIBClientTests.swift in Sources */,
 				0DF1109E255FABCA169F91E3 /* LRCParserTests.swift in Sources */,
 				E65836D2791CB7B558C760C6 /* LiveActivityPolicyTests.swift in Sources */,
+				3144255AF5A7332A8DC1E6CB /* LiveActivityThrottleTests.swift in Sources */,
 				99B4532877B023B050726924 /* LyricsCacheTests.swift in Sources */,
 				4CECC61AC61FF6C56E16CDEE /* LyricsMatcherTests.swift in Sources */,
 				11A91552214C2699864D16CC /* ScaffoldTests.swift in Sources */,
@@ -460,6 +467,7 @@
 				BAB34E02616B243EE8DA0FD5 /* LRCParser.swift in Sources */,
 				92E275E5D691045037D90F95 /* LiveActivityController.swift in Sources */,
 				8FC11068E7FA630811B83E0B /* LiveActivityUpdatePolicy.swift in Sources */,
+				D61EF3B7D29FC1F1721DDB9C /* LiveActivityUpdateThrottle.swift in Sources */,
 				60727B17611118FEE4136983 /* LyricsAttributes.swift in Sources */,
 				D8ED58A7DEE2EEA11B49F7BC /* LyricsCache.swift in Sources */,
 				2090FCA711071F940A2FC238 /* LyricsMatcher.swift in Sources */,

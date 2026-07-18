@@ -17,19 +17,20 @@ import os
 @MainActor
 final class LiveActivityController {
     static let endDelay: TimeInterval = 30
-    /// Line-change updates are folded to at most one per this interval so
-    /// rapid lines (choruses) don't drain the ActivityKit update budget —
-    /// budget exhaustion silently freezes the tile. Track changes and
-    /// play/pause flips always go through.
-    static let minLineUpdateInterval: TimeInterval = 3
+    /// Rapid line changes are coalesced (never dropped) to one update per
+    /// this interval; the newest line always lands, at worst this late.
+    /// Track changes and play/pause flips always send immediately.
+    static let minLineUpdateInterval: TimeInterval = 1.5
 
     private static let log = Logger(subsystem: "com.praveet.driveverse", category: "activity")
 
     private var activity: Activity<LyricsAttributes>?
     private var policy = LiveActivityUpdatePolicy()
+    private var throttle = LiveActivityUpdateThrottle(minInterval: LiveActivityController.minLineUpdateInterval)
     private var endTask: Task<Void, Never>?
     private var stateWatcher: Task<Void, Never>?
-    private var lastUpdateAt: Date?
+    private var pendingTask: Task<Void, Never>?
+    private var pendingContent: LyricsAttributes.ContentState?
     private var lastSentTrackKey: String?
     private var lastSentIsPlaying: Bool?
 
@@ -82,18 +83,42 @@ final class LiveActivityController {
         ) else { return }
 
         let critical = key != lastSentTrackKey || state.isPlaying != lastSentIsPlaying
-        if !critical, let last = lastUpdateAt,
-           Date().timeIntervalSince(last) < Self.minLineUpdateInterval {
-            return // folded — the next line change lands in a few seconds
-        }
-        lastUpdateAt = Date()
         lastSentTrackKey = key
         lastSentIsPlaying = state.isPlaying
-        Self.log.notice("update (line \(position?.lineIndex.map(String.init) ?? "-", privacy: .public), \(String(key.prefix(12)), privacy: .public))")
         let content = Self.content(state: state, position: position)
-        Task {
+
+        switch throttle.decide(critical: critical, now: Date()) {
+        case .sendNow:
+            cancelPendingUpdate() // superseded by newer content
+            Self.log.notice("update (line \(position?.lineIndex.map(String.init) ?? "-", privacy: .public), \(String(key.prefix(12)), privacy: .public))")
+            Task {
+                await activity.update(ActivityContent(state: content, staleDate: nil))
+            }
+        case .coalesce(let fireIn):
+            pendingContent = content
+            armPendingUpdate(after: fireIn, on: activity)
+        }
+    }
+
+    /// Trailing edge of the throttle: deliver the newest coalesced content
+    /// once the spacing interval elapses, so no line change is ever lost.
+    private func armPendingUpdate(after delay: TimeInterval, on activity: Activity<LyricsAttributes>) {
+        guard pendingTask == nil else { return } // armed — content already replaced
+        pendingTask = Task { [weak self] in
+            try? await Task.sleep(for: .seconds(delay))
+            guard !Task.isCancelled, let self, let content = self.pendingContent else { return }
+            self.pendingContent = nil
+            self.pendingTask = nil
+            self.throttle.noteSent(now: Date())
+            Self.log.notice("update (coalesced)")
             await activity.update(ActivityContent(state: content, staleDate: nil))
         }
+    }
+
+    private func cancelPendingUpdate() {
+        pendingTask?.cancel()
+        pendingTask = nil
+        pendingContent = nil
     }
 
     /// Requests the session's activity. Reached two ways: from sync() once a
@@ -117,7 +142,7 @@ final class LiveActivityController {
             activity = requested
             Self.log.notice("activity requested OK (id \(String(requested.id.prefix(8)), privacy: .public), frequent updates enabled: \(ActivityAuthorizationInfo().frequentPushesEnabled, privacy: .public))")
             watch(requested)
-            lastUpdateAt = Date()
+            throttle.noteSent(now: Date())
             if let state {
                 lastSentTrackKey = Self.key(for: state)
                 lastSentIsPlaying = state.isPlaying
@@ -149,6 +174,7 @@ final class LiveActivityController {
                 if self.activity?.id == requested.id {
                     self.activity = nil
                     self.policy.reset()
+                    self.cancelPendingUpdate()
                     Self.log.warning("activity ended outside the app — background restart impossible; reopen the app or rerun the CarPlay automation")
                 }
             }
@@ -160,6 +186,7 @@ final class LiveActivityController {
         endTask = nil
         stateWatcher?.cancel()
         stateWatcher = nil
+        cancelPendingUpdate()
         guard let activity else { return }
         self.activity = nil
         policy.reset()
