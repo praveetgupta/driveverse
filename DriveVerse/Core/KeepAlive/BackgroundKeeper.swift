@@ -2,6 +2,7 @@ import Foundation
 
 #if os(iOS)
 import AVFoundation
+import UIKit
 import os
 
 /// Keeps the app alive in the background during Drive Mode by looping a
@@ -60,7 +61,10 @@ final class BackgroundKeeper {
 
         let player = try AVAudioPlayer(data: Self.silentWAV)
         player.numberOfLoops = -1
-        player.volume = 0
+        // Full volume on purpose: the samples are all zero, so this is just
+        // as silent — but iOS is known to treat zero-volume playback as
+        // "not really playing" and withhold background runtime for it.
+        player.volume = 1
         player.prepareToPlay()
         guard player.play() else { throw CocoaError(.fileReadUnknown) }
         self.player = player
@@ -123,10 +127,20 @@ final class BackgroundKeeper {
 
     /// Visible in Console.app: proof of background life. Silence in the log
     /// stream while Drive Mode is on = the process got suspended anyway.
+    /// backgroundTimeRemaining is the verdict on whether iOS granted audio
+    /// background execution: a huge value (~1.8e308) means yes; a value
+    /// counting down from ~30 means we're on the ordinary suspension clock.
     private func startHeartbeat() {
-        let timer = Timer(timeInterval: 30, repeats: true) { [weak self] _ in
-            let playing = self?.player?.isPlaying ?? false
-            Self.log.notice("heartbeat (player playing: \(playing, privacy: .public))")
+        let timer = Timer(timeInterval: 10, repeats: true) { [weak self] _ in
+            guard let self else { return }
+            let playing = self.player?.isPlaying ?? false
+            let remaining = UIApplication.shared.backgroundTimeRemaining
+            let remainingText = remaining > 86_400 ? "unlimited" : String(format: "%.0fs", remaining)
+            Self.log.notice("heartbeat (playing: \(playing, privacy: .public), bg time: \(remainingText, privacy: .public))")
+            if self.isRunning, !playing {
+                Self.log.warning("player found stopped — recovering")
+                self.recover(rebuild: false)
+            }
         }
         RunLoop.main.add(timer, forMode: .common)
         heartbeat = timer
