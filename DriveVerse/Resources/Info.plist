@@ -35,13 +35,17 @@
 	<false/>
 	<key>NSAppleMusicUsageDescription</key>
 	<string>DriveVerse reads the current Apple Music track to fetch and display synced lyrics. It never plays or modifies your music.</string>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>Allowing "Always" lets the CarPlay automation start Drive Mode automatically when you get in the car. Positions are discarded immediately and never leave the device.</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>Drive Mode uses a low-power location session to stay active in the background so lyrics keep updating on CarPlay and the lock screen. Positions are discarded immediately and never leave the device.</string>
 	<key>NSSupportsLiveActivities</key>
 	<true/>
 	<key>NSSupportsLiveActivitiesFrequentUpdates</key>
 	<true/>
 	<key>UIBackgroundModes</key>
 	<array>
-		<string>audio</string>
+		<string>location</string>
 	</array>
 	<key>UILaunchScreen</key>
 	<dict/>

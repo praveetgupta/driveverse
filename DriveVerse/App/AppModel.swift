@@ -109,6 +109,15 @@ final class AppModel: ObservableObject {
         )
 
         wire()
+
+#if os(iOS)
+        backgroundKeeper.onIssue = { [weak self] message in
+            Task { @MainActor in
+                self?.errorMessage = message
+                self?.driveMode = false
+            }
+        }
+#endif
     }
 
     func start() {
@@ -267,7 +276,7 @@ final class AppModel: ObservableObject {
                 try backgroundKeeper.start()
             } catch {
                 driveMode = false
-                errorMessage = "Couldn't start the Drive Mode audio session."
+                errorMessage = "Drive Mode needs location access to stay alive in the background. Allow it for DriveVerse in Settings → Privacy → Location Services."
             }
         } else if !shouldRun && backgroundKeeper.isRunning {
             backgroundKeeper.stop()

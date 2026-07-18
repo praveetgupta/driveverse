@@ -121,9 +121,20 @@ useful for checking the Live Activity layout.
 
 iOS suspends backgrounded apps, which would freeze polling and Live Activity
 updates a few seconds after you switch to the music app or lock the phone.
-Drive Mode keeps DriveVerse alive by playing a **silent, muted audio loop**
-(`AVAudioSession` category `.playback` with `.mixWithOthers`, so it never
-ducks or interrupts your music) via the `audio` background mode.
+Drive Mode keeps DriveVerse alive with a **low-power background location
+session** (kilometre accuracy, positions discarded immediately).
+
+Why location and not the classic silent-audio trick: iOS explicitly forbids
+Live Activity updates from apps whose only background reason is playing
+media (`liveactivitiesd: "Process is only playing background media so is
+forbidden to update activity"` — see
+[Apple Developer Forums #748569](https://developer.apple.com/forums/thread/748569)).
+Silent audio kept the app alive but silently disqualified every lyric
+update. A location session grants both background runtime *and* update
+permission — the same combination navigation apps rely on. First Drive Mode
+toggle prompts for location access; grant **While Using**, and accept the
+later "Always" upgrade if you want the CarPlay automation to work with the
+app fully closed.
 
 - It runs for as long as Drive Mode is toggled on — including through pauses
   of any length. This is deliberate: a suspended app can neither detect the
@@ -133,10 +144,10 @@ ducks or interrupts your music) via the `audio` background mode.
   instead of ending 30 s after playback stops.
 - It costs some battery — that's why it's an explicit opt-in toggle. Use the
   CarPlay automation below so it switches off when you leave the car.
-- **App Store:** this technique is acceptable for a personally sideloaded
-  build but would be rejected in App Review (silent audio to stay alive is
-  explicitly disallowed). A store build would need a different approach
-  (e.g. push-updated Live Activities from a server).
+- **App Store:** using location purely as a keep-alive is acceptable for a
+  personally sideloaded build but would be rejected in App Review. A store
+  build would need a different approach (push-updated Live Activities from
+  a server).
 
 ### Hands-free: start/stop with the car automatically
 

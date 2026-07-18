@@ -42,7 +42,11 @@ targets:
         # the app backgrounds while Activity.update keeps getting called.
         NSSupportsLiveActivitiesFrequentUpdates: true
         NSAppleMusicUsageDescription: DriveVerse reads the current Apple Music track to fetch and display synced lyrics. It never plays or modifies your music.
-        UIBackgroundModes: [audio]
+        # location (not audio): iOS forbids Live Activity updates from apps
+        # whose only background reason is playing media.
+        UIBackgroundModes: [location]
+        NSLocationWhenInUseUsageDescription: Drive Mode uses a low-power location session to stay active in the background so lyrics keep updating on CarPlay and the lock screen. Positions are discarded immediately and never leave the device.
+        NSLocationAlwaysAndWhenInUseUsageDescription: Allowing "Always" lets the CarPlay automation start Drive Mode automatically when you get in the car. Positions are discarded immediately and never leave the device.
         CFBundleURLTypes:
           - CFBundleURLName: com.praveet.driveverse.auth
             CFBundleURLSchemes: [driveverse]

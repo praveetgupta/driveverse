@@ -1,165 +1,129 @@
 import Foundation
 
 #if os(iOS)
-import AVFoundation
+import CoreLocation
 import UIKit
 import os
 
-/// Keeps the app alive in the background during Drive Mode by looping a
-/// silent WAV through AVAudioPlayer at volume 0. The session uses `.playback`
-/// with `.mixWithOthers` so the real music (Apple Music / Spotify) is never
-/// ducked or interrupted.
+enum KeepAliveError: Error {
+    case locationDenied
+}
+
+/// Keeps the app alive in the background during Drive Mode via a low-power
+/// background location session.
 ///
-/// AVAudioPlayer (not AVAudioEngine) on purpose: the system reroutes a
-/// playing AVAudioPlayer across route/configuration changes on its own,
-/// whereas an engine stops silently and can only be restarted from contexts
-/// that allow session activation — which the background is not.
+/// Location, NOT silent audio, on purpose: iOS explicitly forbids Live
+/// Activity updates from processes whose only background reason is playing
+/// media ("Process is only playing background media so is forbidden to
+/// update activity" — liveactivitiesd). A location session grants normal
+/// background execution AND update permission, which is how navigation apps
+/// update their Live Activities. Accuracy is deliberately coarse — the fix
+/// keeps the process alive; the positions are irrelevant and never stored.
 ///
-/// ⚠️ App Store note (CLAUDE.md §6): a silent-audio keep-alive is fine for a
-/// personally sideloaded build, but App Review rejects the `audio` background
-/// mode when the app produces no audible content. A store build would need a
-/// different strategy. That's why this runs only while the user has explicitly
-/// toggled Drive Mode on — battery cost is opt-in.
-final class BackgroundKeeper {
+/// ⚠️ App Store note (CLAUDE.md §6): using location purely as a keep-alive
+/// would be rejected in App Review. Fine for a personally sideloaded build;
+/// a store build would need push-updated activities instead.
+final class BackgroundKeeper: NSObject, CLLocationManagerDelegate {
     private static let log = Logger(subsystem: "com.praveet.driveverse", category: "keepalive")
 
-    private var player: AVAudioPlayer?
-    private var observers: [NSObjectProtocol] = []
+    private let manager = CLLocationManager()
     private var heartbeat: Timer?
+    private var wantsRunning = false
     private(set) var isRunning = false
 
+    /// Surfaced on the Home screen when a permission problem blocks Drive Mode.
+    var onIssue: ((String) -> Void)?
+
+    override init() {
+        super.init()
+        manager.delegate = self
+        manager.desiredAccuracy = kCLLocationAccuracyKilometer
+        manager.distanceFilter = 500
+        manager.pausesLocationUpdatesAutomatically = false
+        manager.activityType = .automotiveNavigation
+    }
+
     deinit {
-        removeObservers()
         heartbeat?.invalidate()
     }
 
     func start() throws {
         guard !isRunning else { return }
-        try activateAndPlay()
-        isRunning = true
-        installObservers()
-        startHeartbeat()
-        Self.log.notice("keep-alive started")
+        wantsRunning = true
+        switch manager.authorizationStatus {
+        case .notDetermined:
+            // activate() follows from the delegate callback once granted.
+            manager.requestWhenInUseAuthorization()
+        case .denied, .restricted:
+            wantsRunning = false
+            throw KeepAliveError.locationDenied
+        default:
+            activate()
+        }
     }
 
     func stop() {
+        wantsRunning = false
         guard isRunning else { return }
         isRunning = false
-        removeObservers()
         heartbeat?.invalidate()
         heartbeat = nil
-        player?.stop()
-        player = nil
-        try? AVAudioSession.sharedInstance().setActive(false, options: .notifyOthersOnDeactivation)
+        manager.stopUpdatingLocation()
+        manager.allowsBackgroundLocationUpdates = false
         Self.log.notice("keep-alive stopped")
     }
 
-    private func activateAndPlay() throws {
-        let session = AVAudioSession.sharedInstance()
-        try session.setCategory(.playback, options: [.mixWithOthers])
-        try session.setActive(true)
-
-        let player = try AVAudioPlayer(data: Self.silentWAV)
-        player.numberOfLoops = -1
-        // Full volume on purpose: the samples are all zero, so this is just
-        // as silent — but iOS is known to treat zero-volume playback as
-        // "not really playing" and withhold background runtime for it.
-        player.volume = 1
-        player.prepareToPlay()
-        guard player.play() else { throw CocoaError(.fileReadUnknown) }
-        self.player = player
-    }
-
-    /// Interruptions (Siri, calls, alarms) pause the player; resume on .ended.
-    /// A media-services crash invalidates the player entirely — rebuild it.
-    private func installObservers() {
-        guard observers.isEmpty else { return }
-        let center = NotificationCenter.default
-
-        observers.append(center.addObserver(
-            forName: AVAudioSession.interruptionNotification, object: nil, queue: .main
-        ) { [weak self] note in
-            guard let self, self.isRunning else { return }
-            let type = (note.userInfo?[AVAudioSessionInterruptionTypeKey] as? UInt)
-                .flatMap(AVAudioSession.InterruptionType.init)
-            Self.log.notice("interruption: \(type == .began ? "began" : "ended", privacy: .public)")
-            if type == .ended { self.recover(rebuild: false) }
-        })
-
-        observers.append(center.addObserver(
-            forName: AVAudioSession.mediaServicesWereResetNotification, object: nil, queue: .main
-        ) { [weak self] _ in
-            guard let self, self.isRunning else { return }
-            Self.log.warning("media services reset — rebuilding player")
-            self.recover(rebuild: true)
-        })
-
-        observers.append(center.addObserver(
-            forName: AVAudioSession.routeChangeNotification, object: nil, queue: .main
-        ) { [weak self] _ in
-            guard let self, self.isRunning else { return }
-            // AVAudioPlayer keeps playing across route changes by itself;
-            // log it, and nudge the player only if it actually stopped.
-            let playing = self.player?.isPlaying ?? false
-            Self.log.notice("route change (player playing: \(playing, privacy: .public))")
-            if !playing { self.recover(rebuild: false) }
-        })
-    }
-
-    private func removeObservers() {
-        observers.forEach(NotificationCenter.default.removeObserver)
-        observers = []
-    }
-
-    private func recover(rebuild: Bool) {
-        if rebuild { player = nil }
-        if let player, player.play() {
-            Self.log.notice("recovered by resuming player")
-            return
+    private func activate() {
+        guard wantsRunning, !isRunning else { return }
+        manager.allowsBackgroundLocationUpdates = true
+        manager.startUpdatingLocation()
+        isRunning = true
+        startHeartbeat()
+        Self.log.notice("keep-alive started (location, auth: \(self.manager.authorizationStatus.rawValue, privacy: .public))")
+        // "Always" lets the CarPlay automation start Drive Mode with the app
+        // launched straight into the background; When-In-Use is enough for
+        // sessions begun in the foreground.
+        if manager.authorizationStatus == .authorizedWhenInUse {
+            manager.requestAlwaysAuthorization()
         }
-        do {
-            try activateAndPlay()
-            Self.log.notice("recovered by reactivating session")
-        } catch {
-            Self.log.error("recovery failed: \(error.localizedDescription, privacy: .public)")
+    }
+
+    // MARK: - CLLocationManagerDelegate
+
+    func locationManagerDidChangeAuthorization(_ manager: CLLocationManager) {
+        let status = manager.authorizationStatus
+        Self.log.notice("location authorization → \(status.rawValue, privacy: .public)")
+        guard wantsRunning else { return }
+        switch status {
+        case .authorizedWhenInUse, .authorizedAlways:
+            activate()
+        case .denied, .restricted:
+            wantsRunning = false
+            onIssue?("Drive Mode needs location access to stay alive in the background. Allow it for DriveVerse in Settings → Privacy → Location Services.")
+        default:
+            break
         }
+    }
+
+    func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
+        Self.log.warning("location error: \(error.localizedDescription, privacy: .public)")
+    }
+
+    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+        // Positions are irrelevant and discarded — the session's existence is
+        // the feature.
     }
 
     /// Visible in Console.app: proof of background life. Silence in the log
     /// stream while Drive Mode is on = the process got suspended anyway.
-    /// backgroundTimeRemaining is the verdict on whether iOS granted audio
-    /// background execution: a huge value (~1.8e308) means yes; a value
-    /// counting down from ~30 means we're on the ordinary suspension clock.
     private func startHeartbeat() {
-        let timer = Timer(timeInterval: 10, repeats: true) { [weak self] _ in
-            guard let self else { return }
-            let playing = self.player?.isPlaying ?? false
+        let timer = Timer(timeInterval: 10, repeats: true) { _ in
             let remaining = UIApplication.shared.backgroundTimeRemaining
             let remainingText = remaining > 86_400 ? "unlimited" : String(format: "%.0fs", remaining)
-            Self.log.notice("heartbeat (playing: \(playing, privacy: .public), bg time: \(remainingText, privacy: .public))")
-            if self.isRunning, !playing {
-                Self.log.warning("player found stopped — recovering")
-                self.recover(rebuild: false)
-            }
+            Self.log.notice("heartbeat (bg time: \(remainingText, privacy: .public))")
         }
         RunLoop.main.add(timer, forMode: .common)
         heartbeat = timer
     }
-
-    /// 1 s of 8 kHz mono 16-bit silence, synthesized so no asset is needed.
-    private static let silentWAV: Data = {
-        let sampleRate = 8_000
-        let dataSize = sampleRate * 2 // 16-bit mono
-        var d = Data()
-        func str(_ s: String) { d.append(contentsOf: s.utf8) }
-        func u32(_ v: UInt32) { withUnsafeBytes(of: v.littleEndian) { d.append(contentsOf: $0) } }
-        func u16(_ v: UInt16) { withUnsafeBytes(of: v.littleEndian) { d.append(contentsOf: $0) } }
-        str("RIFF"); u32(UInt32(36 + dataSize)); str("WAVE")
-        str("fmt "); u32(16); u16(1); u16(1)
-        u32(UInt32(sampleRate)); u32(UInt32(sampleRate * 2)); u16(2); u16(16)
-        str("data"); u32(UInt32(dataSize))
-        d.append(Data(count: dataSize))
-        return d
-    }()
 }
 #endif
