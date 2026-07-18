@@ -3,20 +3,23 @@ import Foundation
 #if os(iOS) && canImport(ActivityKit)
 import ActivityKit
 
-/// Owns the lyrics Live Activity lifecycle:
-/// start when a track with synced lyrics is playing, update only on line
-/// change / play-pause flip (see LiveActivityUpdatePolicy), end 30 s after
-/// playback stops or immediately when a lyric-less track takes over.
+/// Owns the lyrics Live Activity lifecycle.
+///
+/// One activity spans the whole listening session: iOS refuses
+/// Activity.request from a backgrounded app, so the original
+/// end-and-restart-per-track design lost the tile on every backgrounded song
+/// change. Track changes are now plain updates (allowed from the background);
+/// the activity ends only after playback has stopped for the grace period.
+/// Lyric-less tracks keep the tile alive showing "♪ title" so a later track
+/// with lyrics doesn't need a (background-impossible) fresh start.
 /// On iOS 26 the lock-screen presentation is mirrored onto CarPlay for free.
 @MainActor
 final class LiveActivityController {
     static let endDelay: TimeInterval = 30
 
     private var activity: Activity<LyricsAttributes>?
-    private var currentKey: String?
     private var policy = LiveActivityUpdatePolicy()
     private var endTask: Task<Void, Never>?
-    private var pendingStart = false
 
     /// Drive Mode's keep-alive only runs while an activity is actually up.
     var isActive: Bool { activity != nil }
@@ -32,26 +35,30 @@ final class LiveActivityController {
 
     /// Single entry point, called from AppModel on every state/position change.
     func sync(state: NowPlayingState?, position: LyricsPosition?, hasSyncedLyrics: Bool) {
-        guard let state, hasSyncedLyrics else {
-            // Nothing displayable. Kill a stale activity right away if another
-            // (lyric-less) track took over, else wind down after the grace period.
-            if activity != nil {
-                if let state, Self.key(for: state) != currentKey {
-                    Task { await endNow() }
-                } else {
-                    scheduleEnd()
-                }
-            }
+        guard let state else {
+            scheduleEnd()
             return
         }
 
-        let key = Self.key(for: state)
-        if activity == nil || key != currentKey {
-            guard !pendingStart else { return }
-            pendingStart = true
-            Task {
-                await startFresh(state: state, position: position, key: key)
-                pendingStart = false
+        guard let activity else {
+            // First start needs a playing track with synced lyrics and a
+            // foregrounded app — the request throws in the background and is
+            // simply retried on a later sync (heals on foreground resync).
+            guard state.isPlaying, hasSyncedLyrics,
+                  ActivityAuthorizationInfo().areActivitiesEnabled else { return }
+            let content = Self.content(state: state, position: position)
+            do {
+                self.activity = try Activity.request(
+                    attributes: LyricsAttributes(),
+                    content: ActivityContent(state: content, staleDate: nil)
+                )
+                policy.seed(
+                    trackKey: Self.key(for: state),
+                    lineIndex: position?.lineIndex,
+                    isPlaying: state.isPlaying
+                )
+            } catch {
+                self.activity = nil
             }
             return
         }
@@ -62,10 +69,14 @@ final class LiveActivityController {
             scheduleEnd()
         }
 
-        if policy.shouldUpdate(lineIndex: position?.lineIndex, isPlaying: state.isPlaying) {
+        if policy.shouldUpdate(
+            trackKey: Self.key(for: state),
+            lineIndex: position?.lineIndex,
+            isPlaying: state.isPlaying
+        ) {
             let content = Self.content(state: state, position: position)
             Task {
-                await activity?.update(ActivityContent(state: content, staleDate: nil))
+                await activity.update(ActivityContent(state: content, staleDate: nil))
             }
         }
     }
@@ -75,36 +86,11 @@ final class LiveActivityController {
         endTask = nil
         guard let activity else { return }
         self.activity = nil
-        currentKey = nil
         policy.reset()
         await activity.end(nil, dismissalPolicy: .immediate)
     }
 
     // MARK: - Internals
-
-    private func startFresh(state: NowPlayingState, position: LyricsPosition?, key: String) async {
-        await endNow()
-        // Only begin an activity when playback is actually running.
-        guard state.isPlaying, ActivityAuthorizationInfo().areActivitiesEnabled else { return }
-
-        let attributes = LyricsAttributes(
-            title: state.title,
-            artist: state.artist,
-            sourceName: state.source.displayName
-        )
-        let content = Self.content(state: state, position: position)
-        do {
-            activity = try Activity.request(
-                attributes: attributes,
-                content: ActivityContent(state: content, staleDate: nil)
-            )
-            currentKey = key
-            policy.seed(lineIndex: position?.lineIndex, isPlaying: state.isPlaying)
-        } catch {
-            activity = nil
-            currentKey = nil
-        }
-    }
 
     private func scheduleEnd() {
         guard endTask == nil, activity != nil else { return }
@@ -126,7 +112,10 @@ final class LiveActivityController {
 
     private static func content(state: NowPlayingState, position: LyricsPosition?) -> LyricsAttributes.ContentState {
         LyricsAttributes.ContentState(
-            currentLine: position?.currentLine ?? "♪",
+            title: state.title,
+            artist: state.artist,
+            sourceName: state.source.displayName,
+            currentLine: position?.currentLine ?? "♪ \(state.title)",
             nextLine: position?.nextLine ?? "",
             progress: position?.trackProgress ?? 0,
             isPlaying: state.isPlaying

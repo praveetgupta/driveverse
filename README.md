@@ -161,6 +161,9 @@ ducks or interrupts your music) via the `audio` background mode.
       lines advance on time.
 - [ ] Pausing shows the pause glyph; resuming continues. Stopping music ends
       the activity ~30 s later.
+- [ ] Switching songs — including from the lock screen while the app is
+      backgrounded — keeps the tile and moves it to the new track; while
+      lyrics load (or for tracks without lyrics) it shows "♪ title".
 - [ ] Dynamic Island compact view shows the current line; long-press expands.
 - [ ] With CarPlay connected, the activity appears on the car screen.
 

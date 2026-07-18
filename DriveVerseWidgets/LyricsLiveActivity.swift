@@ -107,11 +107,11 @@ struct LockScreenLyricsView: View {
             HStack(spacing: 6) {
                 Image(systemName: context.state.isPlaying ? "music.note" : "pause.fill")
                     .font(.caption2)
-                Text("\(context.attributes.title) — \(context.attributes.artist)")
+                Text("\(context.state.title) — \(context.state.artist)")
                     .font(.caption)
                     .lineLimit(1)
                 Spacer(minLength: 4)
-                Text(context.attributes.sourceName)
+                Text(context.state.sourceName)
                     .font(.caption2.bold())
                     .padding(.horizontal, 6)
                     .padding(.vertical, 2)
