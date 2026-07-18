@@ -37,6 +37,10 @@ targets:
       properties:
         CFBundleDisplayName: DriveVerse
         NSSupportsLiveActivities: true
+        # Lyric lines change every few seconds — without the frequent-updates
+        # budget, ActivityKit silently stops rendering updates ~30 s after
+        # the app backgrounds while Activity.update keeps getting called.
+        NSSupportsLiveActivitiesFrequentUpdates: true
         NSAppleMusicUsageDescription: DriveVerse reads the current Apple Music track to fetch and display synced lyrics. It never plays or modifies your music.
         UIBackgroundModes: [audio]
         CFBundleURLTypes:
@@ -72,6 +76,7 @@ targets:
       path: DriveVerseWidgets/Info.plist
       properties:
         CFBundleDisplayName: DriveVerse Lyrics
+        NSSupportsLiveActivitiesFrequentUpdates: true
         NSExtension:
           NSExtensionPointIdentifier: com.apple.widgetkit-extension
 

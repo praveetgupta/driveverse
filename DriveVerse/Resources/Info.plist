@@ -37,6 +37,8 @@
 	<string>DriveVerse reads the current Apple Music track to fetch and display synced lyrics. It never plays or modifies your music.</string>
 	<key>NSSupportsLiveActivities</key>
 	<true/>
+	<key>NSSupportsLiveActivitiesFrequentUpdates</key>
+	<true/>
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>audio</string>
