@@ -49,6 +49,13 @@ final class SpotifySource: NowPlayingSource {
         pollTask = nil
     }
 
+    /// Foreground resync: abandon the current sleep and poll immediately.
+    func pollNow() {
+        guard pollTask != nil else { return }
+        stop()
+        start()
+    }
+
     /// One poll; returns the delay until the next one.
     func pollOnce() async -> TimeInterval {
         guard await tokenProvider.isConnected else {

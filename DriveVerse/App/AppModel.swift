@@ -97,6 +97,18 @@ final class AppModel: ObservableObject {
         syncEngine.startTicking()
     }
 
+    /// Called when the scene returns to .active: any background stretch may
+    /// have left the lyric index stale (missed notifications, old anchors),
+    /// so force-fresh reads from both sources; the sync engine's seek
+    /// detection snaps the line immediately.
+    func foregroundResync() {
+        guard started else { return }
+#if os(iOS)
+        appleSource.refresh()
+#endif
+        spotifySource.pollNow()
+    }
+
     // MARK: Actions
 
 #if os(iOS)

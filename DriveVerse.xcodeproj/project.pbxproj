@@ -101,12 +101,12 @@
 		96FBECE39D05D602D1D21998 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		A0B4549E3346E152F7BDE493 /* DriveVerseTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = DriveVerseTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		ADC4F0A911AA90F04EDD9D29 /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
-		B5032A3403B70D48EC541330 /* DriveVerseWidgets.appex */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = "wrapper.app-extension"; path = DriveVerseWidgets.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		B5032A3403B70D48EC541330 /* DriveVerseWidgets.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = DriveVerseWidgets.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		B6BF21625B40AD357F50F13E /* LyricsLiveActivity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LyricsLiveActivity.swift; sourceTree = "<group>"; };
 		B7D50CB10C457B5FDA5C18A4 /* LyricsAttributes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LyricsAttributes.swift; sourceTree = "<group>"; };
 		B936DB53A7912A6E22A5F4DF /* SyncEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SyncEngine.swift; sourceTree = "<group>"; };
 		BCA7F680E5F709BA7D68C636 /* SpotifySourceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpotifySourceTests.swift; sourceTree = "<group>"; };
-		C1E4F07C72942513C3DBEF6B /* DriveVerse.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = DriveVerse.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		C1E4F07C72942513C3DBEF6B /* DriveVerse.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DriveVerse.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		CDD7A295A0865928BA32F559 /* AppModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppModel.swift; sourceTree = "<group>"; };
 		CE443411721188CA1CD78AEB /* LyricsService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LyricsService.swift; sourceTree = "<group>"; };
 		D230740C807DAFF0C3A621ED /* SpotifySource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpotifySource.swift; sourceTree = "<group>"; };
@@ -578,6 +578,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
+				DEVELOPMENT_TEAM = UC4W666V3X;
 				INFOPLIST_FILE = DriveVerse/Resources/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -592,6 +593,7 @@
 		6F2D4325AA48355B99EFF6A9 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				DEVELOPMENT_TEAM = UC4W666V3X;
 				INFOPLIST_FILE = DriveVerseWidgets/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -689,6 +691,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
+				DEVELOPMENT_TEAM = UC4W666V3X;
 				INFOPLIST_FILE = DriveVerse/Resources/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -703,6 +706,7 @@
 		E875805E9FE0CBB9CC88C87E /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				DEVELOPMENT_TEAM = UC4W666V3X;
 				INFOPLIST_FILE = DriveVerseWidgets/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",

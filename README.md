@@ -171,6 +171,14 @@ ducks or interrupts your music) via the `audio` background mode.
 - [ ] Toggle it off → app suspends normally in the background (updates stop
       after a while).
 - [ ] Drive Mode audio never makes your music duck or stutter.
+- [ ] Connect to CarPlay/Bluetooth with Drive Mode already on → lyrics keep
+      advancing (the route change restarts the keep-alive).
+- [ ] Invoke Siri or let an alarm fire mid-session → lyric updates resume
+      within a couple of seconds after it ends.
+- [ ] Lock the phone, wait 5+ minutes, switch songs from the lock screen →
+      the Live Activity follows within ~1 s.
+- [ ] Reopen the app after a long background stretch → the lyric line snaps
+      to the correct position immediately (foreground resync).
 
 ## Known limitations
 

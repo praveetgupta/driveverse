@@ -14,19 +14,45 @@ import AVFoundation
 /// different strategy. That's why this runs only while the user has explicitly
 /// toggled Drive Mode on AND a Live Activity is active — battery cost is opt-in.
 final class BackgroundKeeper {
-    private let engine = AVAudioEngine()
-    private let player = AVAudioPlayerNode()
+    private var engine = AVAudioEngine()
+    private var player = AVAudioPlayerNode()
     private let format = AVAudioFormat(standardFormatWithSampleRate: 44_100, channels: 1)!
     private(set) var isRunning = false
+    private var observers: [NSObjectProtocol] = []
 
     init() {
+        buildEngine()
+    }
+
+    deinit {
+        removeObservers()
+    }
+
+    func start() throws {
+        guard !isRunning else { return }
+        try activateAndPlay()
+        isRunning = true
+        installObservers()
+    }
+
+    func stop() {
+        guard isRunning else { return }
+        isRunning = false
+        removeObservers()
+        player.stop()
+        engine.stop()
+        try? AVAudioSession.sharedInstance().setActive(false, options: .notifyOthersOnDeactivation)
+    }
+
+    private func buildEngine() {
+        engine = AVAudioEngine()
+        player = AVAudioPlayerNode()
         engine.attach(player)
         engine.connect(player, to: engine.mainMixerNode, format: format)
         engine.mainMixerNode.outputVolume = 0
     }
 
-    func start() throws {
-        guard !isRunning else { return }
+    private func activateAndPlay() throws {
         let session = AVAudioSession.sharedInstance()
         try session.setCategory(.playback, options: [.mixWithOthers])
         try session.setActive(true)
@@ -38,15 +64,53 @@ final class BackgroundKeeper {
         try engine.start()
         player.scheduleBuffer(buffer, at: nil, options: .loops)
         player.play()
-        isRunning = true
     }
 
-    func stop() {
-        guard isRunning else { return }
+    /// The engine dies silently in three ways, and each one suspends the app
+    /// moments later unless the keep-alive restarts:
+    /// - interruptions (Siri, calls, alarms) — resume on .ended;
+    /// - output configuration changes — connecting to CarPlay/Bluetooth is
+    ///   itself a route change that stops AVAudioEngine;
+    /// - a media-services crash, which invalidates every audio object we
+    ///   hold and requires rebuilding the engine from scratch.
+    private func installObservers() {
+        guard observers.isEmpty else { return }
+        let center = NotificationCenter.default
+
+        observers.append(center.addObserver(
+            forName: AVAudioSession.interruptionNotification, object: nil, queue: .main
+        ) { [weak self] note in
+            guard let self, self.isRunning else { return }
+            let type = (note.userInfo?[AVAudioSessionInterruptionTypeKey] as? UInt)
+                .flatMap(AVAudioSession.InterruptionType.init)
+            if type == .ended { self.restart(rebuild: false) }
+        })
+
+        observers.append(center.addObserver(
+            forName: .AVAudioEngineConfigurationChange, object: nil, queue: .main
+        ) { [weak self] _ in
+            guard let self, self.isRunning else { return }
+            self.restart(rebuild: false)
+        })
+
+        observers.append(center.addObserver(
+            forName: AVAudioSession.mediaServicesWereResetNotification, object: nil, queue: .main
+        ) { [weak self] _ in
+            guard let self, self.isRunning else { return }
+            self.restart(rebuild: true)
+        })
+    }
+
+    private func removeObservers() {
+        observers.forEach(NotificationCenter.default.removeObserver)
+        observers = []
+    }
+
+    private func restart(rebuild: Bool) {
         player.stop()
         engine.stop()
-        try? AVAudioSession.sharedInstance().setActive(false, options: .notifyOthersOnDeactivation)
-        isRunning = false
+        if rebuild { buildEngine() }
+        try? activateAndPlay()
     }
 }
 #endif

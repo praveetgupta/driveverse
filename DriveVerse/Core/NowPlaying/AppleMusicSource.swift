@@ -89,6 +89,7 @@ final class AppleMusicSource: NowPlayingSource {
         timer = nil
         observers.forEach(NotificationCenter.default.removeObserver)
         observers = []
+        lastSnapshot = nil
         player.endGeneratingPlaybackNotifications()
     }
 
@@ -103,16 +104,25 @@ final class AppleMusicSource: NowPlayingSource {
                 self?.emit()
             })
         }
-        // 1 s position refresh while playing — notifications alone don't fire
-        // on plain position advancement.
+        // 1 s poll of the full player state — MediaPlayer notifications are
+        // flaky while backgrounded (Drive Mode), so track switches and
+        // pauses must also be caught by polling, not notifications alone.
         let timer = Timer(timeInterval: 1.0, repeats: true) { [weak self] _ in
-            guard let self, self.player.playbackState == .playing else { return }
-            self.emit()
+            self?.emit()
         }
         RunLoop.main.add(timer, forMode: .common)
         self.timer = timer
         emit()
     }
+
+    /// Foreground resync: read the player immediately instead of waiting for
+    /// the next tick or a notification that may never have arrived.
+    func refresh() {
+        guard timer != nil else { return }
+        emit()
+    }
+
+    private var lastSnapshot: AppleMusicSnapshot??
 
     private func emit() {
         let snapshot = player.nowPlayingItem.map { item in
@@ -125,6 +135,11 @@ final class AppleMusicSource: NowPlayingSource {
                 isPlaying: player.playbackState == .playing
             )
         }
+        // While playing the position advances every tick, so this always
+        // sends; while paused or idle it collapses the 1 s tick to real
+        // changes only, keeping the UI and sync pipeline quiet.
+        guard snapshot != lastSnapshot else { return }
+        lastSnapshot = snapshot
         subject.send(AppleMusicStateMapper.state(from: snapshot, capturedAt: Date()))
     }
 }
