@@ -12,3 +12,6 @@ DriveVerse/Resources/Secrets.plist
 
 # macOS
 .DS_Store
+
+# Raw screen recording (kept local, not committed)
+demo-raw.mp4

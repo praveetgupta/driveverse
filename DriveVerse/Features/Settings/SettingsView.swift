@@ -61,7 +61,7 @@ struct SettingsView: View {
             } header: {
                 Text("Drive Mode & battery")
             } footer: {
-                Text("Drive Mode keeps DriveVerse awake in the background by playing a silent, muted audio loop (mixed with your music, never audible). It uses extra battery, so it's opt-in and only runs while a lyrics Live Activity is on screen. This trick is fine for a personal sideloaded app but would not pass App Store review.")
+                Text("Drive Mode keeps DriveVerse awake in the background using a low-power location session, so lyrics keep updating on CarPlay and the lock screen while you drive. Locations are discarded immediately and never stored. It uses extra battery, so it's opt-in. This approach is fine for a personal sideloaded app but would not pass App Store review.")
             }
 
             Section {
