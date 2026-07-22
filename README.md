@@ -1,6 +1,10 @@
-# DriveVerse
+<p align="center">
+  <img src="assets/app-icon-rounded.png" alt="DriveVerse app icon" width="112">
+</p>
 
-**Live, time-synced song lyrics on your car's CarPlay screen — for whatever you're already playing in Apple Music or Spotify.**
+<h1 align="center">DriveVerse</h1>
+
+<p align="center"><strong>Live, time-synced song lyrics on your car's CarPlay screen — for whatever you're already playing in Apple Music or Spotify.</strong></p>
 
 <p align="center">
   <img src="assets/demo.gif" alt="DriveVerse showing synced lyrics advancing on the iPhone lock screen" width="300">
