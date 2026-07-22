@@ -244,7 +244,6 @@ final class AppModel: ObservableObject {
         )
         if signature != currentSignature {
             currentSignature = signature
-            Self.log.notice("track change detected: \(state.title.prefix(12), privacy: .public) [\(state.source == .appleMusic ? "AM" : "SP", privacy: .public)]")
             fetchLyrics(for: state)
         }
         syncLiveActivity()
@@ -301,21 +300,16 @@ final class AppModel: ObservableObject {
                     }
                     if lines.isEmpty {
                         self.lyricsState = .notFound
-                        Self.log.notice("lyrics: synced-but-empty for \(state.title.prefix(12), privacy: .public)")
                     } else {
                         self.lyricsState = .synced(lines)
                         self.syncEngine.setLyrics(lines)
-                        Self.log.notice("lyrics: synced, \(lines.count) lines for \(state.title.prefix(12), privacy: .public)")
                     }
                 case .plain(let text):
                     self.lyricsState = .plain(Transliterator.latinized(text))
-                    Self.log.notice("lyrics: plain-only for \(state.title.prefix(12), privacy: .public)")
                 case .instrumental:
                     self.lyricsState = .instrumental
-                    Self.log.notice("lyrics: instrumental for \(state.title.prefix(12), privacy: .public)")
                 case .notFound:
                     self.lyricsState = .notFound
-                    Self.log.notice("lyrics: not found for \(state.title.prefix(12), privacy: .public)")
                 }
             } catch is CancellationError {
                 // superseded by a newer track — nothing to do

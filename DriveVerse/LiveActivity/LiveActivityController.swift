@@ -90,7 +90,6 @@ final class LiveActivityController {
         switch throttle.decide(critical: critical, now: Date()) {
         case .sendNow:
             cancelPendingUpdate() // superseded by newer content
-            Self.log.notice("update (line \(position?.lineIndex.map(String.init) ?? "-", privacy: .public), \(String(key.prefix(12)), privacy: .public))")
             Task {
                 await activity.update(ActivityContent(state: content, staleDate: nil))
             }
@@ -110,7 +109,6 @@ final class LiveActivityController {
             self.pendingContent = nil
             self.pendingTask = nil
             self.throttle.noteSent(now: Date())
-            Self.log.notice("update (coalesced)")
             await activity.update(ActivityContent(state: content, staleDate: nil))
         }
     }
@@ -140,7 +138,6 @@ final class LiveActivityController {
                 content: ActivityContent(state: content, staleDate: nil)
             )
             activity = requested
-            Self.log.notice("activity requested OK (id \(String(requested.id.prefix(8)), privacy: .public), frequent updates enabled: \(ActivityAuthorizationInfo().frequentPushesEnabled, privacy: .public))")
             watch(requested)
             throttle.noteSent(now: Date())
             if let state {
@@ -169,7 +166,6 @@ final class LiveActivityController {
         stateWatcher?.cancel()
         stateWatcher = Task { [weak self] in
             for await state in requested.activityStateUpdates {
-                Self.log.notice("activity state → \(String(describing: state), privacy: .public)")
                 guard let self, state == .ended || state == .dismissed else { continue }
                 if self.activity?.id == requested.id {
                     self.activity = nil
@@ -190,7 +186,6 @@ final class LiveActivityController {
         guard let activity else { return }
         self.activity = nil
         policy.reset()
-        Self.log.notice("activity ended by app")
         await activity.end(nil, dismissalPolicy: .immediate)
     }
 

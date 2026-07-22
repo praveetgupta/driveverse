@@ -40,7 +40,6 @@ enum AppleMusicStateMapper {
 
 #if os(iOS)
 import MediaPlayer
-import os
 
 /// Observes the system (Apple Music) player via the MediaPlayer framework.
 /// Zero-latency and exact-position, so the coordinator prefers it when playing.
@@ -110,24 +109,10 @@ final class AppleMusicSource: NowPlayingSource {
         // pauses must also be caught by polling, not notifications alone.
         let timer = Timer(timeInterval: 1.0, repeats: true) { [weak self] _ in
             self?.emit()
-            self?.logDiagnostics()
         }
         RunLoop.main.add(timer, forMode: .common)
         self.timer = timer
         emit()
-    }
-
-    private static let diag = Logger(subsystem: "com.praveet.driveverse", category: "nowplaying")
-    private var tickCount = 0
-
-    /// Every 10 s, log what the player reports — background-health evidence
-    /// in Console.app at zero extra cost (same values emit() just read).
-    private func logDiagnostics() {
-        tickCount += 1
-        guard tickCount % 10 == 0 else { return }
-        let title = player.nowPlayingItem?.title?.prefix(12) ?? "nil"
-        let pos = String(format: "%.1f", player.currentPlaybackTime)
-        Self.diag.notice("MP: item=\(String(title), privacy: .public) pos=\(pos, privacy: .public) state=\(self.player.playbackState.rawValue, privacy: .public)")
     }
 
     /// Foreground resync: read the player immediately instead of waiting for

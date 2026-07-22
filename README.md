@@ -1,292 +1,161 @@
 # DriveVerse
 
-A personal iOS app that shows real-time, time-synced lyrics for whatever is
-currently playing in **Apple Music** or **Spotify**, surfaced on **CarPlay**
-via a Live Activity (iOS 26 mirrors lock-screen Live Activities onto the
-CarPlay screen). An in-app full-screen scrolling lyrics view exists for
-passengers / parked use.
+**Live, time-synced song lyrics on your car's CarPlay screen — for whatever you're already playing in Apple Music or Spotify.**
 
-DriveVerse never plays audio and is **not** a CarPlay app (no CarPlay
-entitlement, no CPTemplates) — the CarPlay surface is exclusively the Live
-Activity.
+DriveVerse watches whatever song is playing, finds the synced lyrics for it, and shows the current line (plus the one coming up) right on your CarPlay display, lock screen, and Dynamic Island. You keep using Apple Music or Spotify exactly like you always do. DriveVerse just rides along and puts the words on screen.
 
-> ⚠️ **Copyright / distribution note**
-> Lyrics are fetched from the community-run [LRCLIB](https://lrclib.net) API
-> for **personal use**. This is accepted community practice for private
-> projects, but this app must **not** be distributed on the App Store without
-> a licensed lyrics provider. Lyrics are cached locally only, for at most
-> 30 days.
+It doesn't play any music of its own, it isn't a full CarPlay app, and it never touches your playback. It only reads what's playing and shows the lyrics.
+
+Oh, and if you listen to Hindi, Punjabi, Russian, Japanese, or anything else that isn't written in the Latin alphabet, DriveVerse romanizes the lyrics so you can actually read along in English letters.
+
+> **A note on lyrics and copyright.** Lyrics come from [LRCLIB](https://lrclib.net), a free community lyrics database. That's fine for a personal app you build and run yourself, which is exactly what this is. It is *not* okay for the App Store without a proper licensed lyrics provider, so please don't ship it there. Lyrics are cached only on your device, for 30 days at most.
 
 ---
+
+## What it does
+
+- **Reads your current song** from Apple Music (via the local MediaPlayer framework) or Spotify (via the Spotify Web API).
+- **Fetches synced (LRC) lyrics** from LRCLIB and keeps them lined up with the music as it plays.
+- **Shows the current + next line** as a Live Activity — the same tile appears on your **CarPlay** screen, **lock screen**, and **Dynamic Island** on iOS 26.
+- **Romanizes non-English lyrics** into Latin letters on the device (Hindi, Cyrillic, Japanese, Korean, and more).
+- **Keeps working while you drive** through a "Drive Mode" that stops iOS from freezing the app in your pocket.
+- **A full-screen scrolling lyrics view** in the app itself, for passengers or when you're parked.
+
+No account to make, no server, no analytics, no tracking. Everything happens on your phone.
 
 ## How it works
 
 ```
-Apple Music ──(MediaPlayer notifications + 1 s timer)──┐
-                                                       ├─► NowPlayingCoordinator ─► SyncEngine ─► in-app lyrics view
-Spotify ──(Web API poll, 5 s active / 15 s idle)───────┘        │                     │
-                                                                ▼                     ▼
-                                                       LRCLIB lyrics fetch    Live Activity (lock screen,
-                                                       (cache-first, 30 d)    Dynamic Island, CarPlay)
+Apple Music ──(MediaPlayer, ~1s)──┐
+                                  ├─► picks the active source ─► sync engine ─► lyrics on screen
+Spotify ──────(Web API poll)──────┘         │                       │
+                                            ▼                       ▼
+                                   LRCLIB lyrics lookup     Live Activity
+                                   (cached 30 days)         (CarPlay / lock screen / Dynamic Island)
 ```
 
-- **Arbitration:** if Apple Music reports a playing item it wins (local,
-  zero-latency, exact position). Otherwise a playing Spotify track wins. If
-  both are idle, the last known track is kept, marked paused. You can pin a
-  source in Settings.
-- **Sync:** playback position is extrapolated between source reports
-  (`position + (now − capturedAt)`) on a 500 ms tick; the current LRC line is
-  found by binary search. Deviations > 2 s from the extrapolation are treated
-  as seeks and snap immediately; smaller ones are polling jitter and ignored.
-- **Live Activity updates** happen only when the current line index changes or
-  play/pause flips — never on the tick — so a typical song is 40–80 local
-  `Activity.update` calls.
+A few details worth knowing:
+
+- **Which source wins:** if Apple Music is playing, it's used (it's local and exact). Otherwise a playing Spotify track is used. You can also pin one source in Settings.
+- **Staying in sync:** between updates, the app estimates the current playback position and finds the matching lyric line. If you skip or seek, it notices and snaps to the right line.
+- **CarPlay:** iOS 26 automatically mirrors the lock-screen Live Activity onto the car screen. There's no CarPlay entitlement and no CPTemplate code here — the Live Activity *is* the CarPlay experience.
 
 ## Requirements
 
-- Xcode 26 (iOS 26 SDK), a free or paid Apple developer account for device
-  signing.
-- An iPhone on iOS 26 (Apple Music detection and Live Activities need real
-  hardware).
-- A Spotify account (free works) if you want Spotify detection.
-- [XcodeGen](https://github.com/yonaskolb/XcodeGen) if you want to regenerate
-  the project (`brew install xcodegen`). The generated
-  `DriveVerse.xcodeproj` is checked in, so this is optional.
+- An iPhone running **iOS 26** (Apple Music detection and Live Activities need real hardware — the Simulator can't do it).
+- **Xcode 26** to build it.
+- A free or paid Apple Developer account to sign the app onto your phone.
+- A **Spotify** account only if you want Spotify support (Apple Music works without it).
 
 ## Setup
 
-### 1. Spotify app registration (once)
+### 1. Get the code and open it
 
-1. Go to <https://developer.spotify.com/dashboard> and create an app
-   (Developer Mode is fine — it works for the account that owns the app).
-2. Add this **Redirect URI**: `driveverse://callback`
-3. Check **iOS** as the API/SDK you're using (Web API).
-4. Copy the **Client ID** (no client secret is used — this is PKCE).
+```bash
+git clone https://github.com/praveetgupta/driveverse.git
+cd driveverse
+```
 
-### 2. Local secrets
+The Xcode project is checked in, so you can open `DriveVerse.xcodeproj` directly. (If you ever change which files exist, regenerate it with `./scripts/generate.sh`, which needs `brew install xcodegen`.)
+
+### 2. Add your Spotify Client ID
+
+Even if you don't use Spotify, you need this file to exist or the build won't compile:
 
 ```bash
 cp DriveVerse/Resources/Secrets.example.plist DriveVerse/Resources/Secrets.plist
-# then edit Secrets.plist and paste your Spotify Client ID
 ```
 
-`Secrets.plist` is gitignored; never commit it or hardcode the ID.
-**This step is required before the first build** — the project references
-`Secrets.plist`, so a fresh clone fails to compile until the file exists
-(leave the placeholder value in if you don't use Spotify).
+If you *do* want Spotify:
 
-### 3. Build & run
+1. Go to the [Spotify Developer Dashboard](https://developer.spotify.com/dashboard) and create an app.
+2. Add `driveverse://callback` as a **Redirect URI**.
+3. Copy the **Client ID** (there's no client secret — this uses PKCE) into `Secrets.plist`.
 
-```bash
-open DriveVerse.xcodeproj
-```
+`Secrets.plist` is gitignored, so your ID never gets committed. Keep it that way.
 
-- Select the **DriveVerse** scheme, set your signing team on the `DriveVerse`
-  and `DriveVerseWidgets` targets, and run on your iPhone.
-- If you change the file layout, regenerate the project with
-  `./scripts/generate.sh`.
+### 3. Sign and run
 
-### 4. Permissions on first launch
+Open the project in Xcode, pick the **DriveVerse** scheme, and set your signing team on both the `DriveVerse` and `DriveVerseWidgets` targets (Signing & Capabilities tab). Plug in your iPhone and hit Run.
 
-- **Media & Apple Music** access — required for Apple Music detection.
-- **Live Activities** — enable for DriveVerse in Settings if prompted, and
-  keep **More Frequent Updates** on (Settings → DriveVerse → Live
-  Activities) or lyric updates get throttled after ~30 s in the background.
-- **Location, While Using** — requested when you first toggle Drive Mode;
-  it's the background keep-alive (see below). Accept the later "Always"
-  upgrade only if you want the CarPlay automation to work with the app
-  closed.
+### 4. First-launch permissions
 
-## Privacy & data
+- **Media & Apple Music** — needed to see what Apple Music is playing.
+- **Live Activities** — turn on **More Frequent Updates** under Settings → DriveVerse → Live Activities, or the lyrics stop updating after about 30 seconds in the background.
+- **Location (While Using)** — asked the first time you turn on Drive Mode. It's how the app stays awake in the background (explained below). Say yes to the "Always" upgrade later only if you want the hands-free CarPlay automation.
 
-Everything stays on the device; there is no backend, no account, and no
-analytics.
+## Using it in the car
 
-- Now-playing metadata is read locally (MediaPlayer) or fetched from your
-  own Spotify account over HTTPS; only normalized track title/artist/album/
-  duration are sent to LRCLIB to look up lyrics.
-- Spotify tokens live in the Keychain (after-first-unlock accessibility, so
-  Drive Mode can refresh them while the phone is locked).
-- Lyrics are cached on-disk for at most 30 days; Settings → Clear cache
-  wipes them.
-- Drive Mode's location fixes are discarded the moment they arrive — nothing
-  is stored, logged persistently, or transmitted.
-- Non-Latin lyrics are transliterated to Latin letters on-device (ICU); no
-  text ever leaves the phone for that.
+1. Connect your phone to CarPlay and play something in Apple Music or Spotify.
+2. Open DriveVerse and turn on **Drive Mode**.
+3. When a song with synced lyrics plays, the lyrics tile shows up on the car screen (and your lock screen and Dynamic Island).
+
+### Turn it on automatically when you get in
+
+You don't have to open the app every time. DriveVerse includes two Shortcuts actions — **Start Drive Mode** and **Stop Drive Mode** — so your phone can do it for you:
+
+1. Open the **Shortcuts** app → **Automation** → **+**.
+2. Pick **CarPlay** → **Connects** → **Run Immediately** → add the **Start Drive Mode** action.
+3. Make a second one: **CarPlay** → **Disconnects** → **Run Immediately** → **Stop Drive Mode**.
+
+Now getting in the car starts DriveVerse in the background and puts up the lyrics tile on its own (it shows "♪ Waiting for music…" until you press play). Leaving the car shuts it all down so nothing keeps running in the background.
+
+### Why Drive Mode needs to exist
+
+iOS freezes apps a few seconds after you lock the phone or switch away, which would freeze the lyrics too. Drive Mode keeps DriveVerse running using a very low-power background location session (rough, city-block-level accuracy — the location is thrown away instantly and never stored or sent anywhere).
+
+Why location and not the old "play silent audio" trick? Because iOS specifically blocks apps from updating Live Activities when the only reason they're awake is playing background audio. A location session is the same approach navigation apps use, and it's the one that actually lets the lyrics keep updating. It does use some battery, which is why Drive Mode is a manual toggle — and why the CarPlay automation above is handy, since it switches off the moment you leave.
+
+## Privacy
+
+Everything stays on your phone. There's no backend, no account, and no analytics.
+
+- Song info is read locally (Apple Music) or from your own Spotify account over HTTPS.
+- Only the basic track details (title, artist, album, length) are sent to LRCLIB to look up lyrics.
+- Your Spotify login token is stored in the iOS Keychain.
+- Lyrics are cached on disk for up to 30 days. Settings → Clear Cache wipes them.
+- Drive Mode's location fixes are discarded immediately — nothing is saved or transmitted.
+- Lyric romanization happens on the device. No text is sent anywhere for it.
 
 ## Running the tests
 
-- **In Xcode:** the `DriveVerseTests` target (Swift Testing) — `Cmd-U`.
-- **From the command line** (works even with only Command Line Tools
-  installed, via the SwiftPM harness in `Package.swift`):
+There's a full unit test suite (Swift Testing). In Xcode, press **Cmd-U**. From the command line:
 
 ```bash
 ./scripts/test.sh
 ```
 
-The suite covers the LRC parser, title/artist normalization, sync
-engine (extrapolation, seek snapping, line binary search), the LRCLIB client
-fallback chain (stubbed with URLProtocol), the disk cache TTLs, PKCE (RFC 7636
-test vector), the token refresh state machine, Spotify response parsing and
-429/401 handling, source arbitration, and the Live Activity update policy.
+It covers lyric parsing, title/artist matching, the sync engine, the LRCLIB client and its fallbacks, the on-disk cache, Spotify auth (PKCE, token refresh, response parsing), source arbitration, lyric romanization, and the Live Activity update logic.
 
-## Using it in the car (CarPlay)
+## Good to know / limitations
 
-1. Connect the phone to CarPlay and start music in Apple Music or Spotify.
-2. Open DriveVerse and toggle **Drive Mode** on.
-3. When a track with synced lyrics plays, a Live Activity starts; iOS 26 shows
-   it on the CarPlay screen (and the lock screen / Dynamic Island).
+- Without Drive Mode on, updates stop shortly after the app goes to the background. That's expected — Drive Mode is the fix.
+- Spotify position is polled every few seconds, so a seek in Spotify can take a moment to catch up. Apple Music is instant.
+- DriveVerse can't control playback (it's just watching), so the lyrics view is display-only by design.
+- If a song isn't in LRCLIB, you'll see "No lyrics found." Misses are re-checked the next day; hits are cached.
+- Romanization uses the standard system transliteration, which is very readable but occasionally a little literal.
+- There's no dedicated CarPlay dashboard widget yet — the Live Activity covers the driving experience. It's a possible future addition.
 
-**Testing without a car:** Xcode → open the Simulator → **I/O → External
-Displays → CarPlay** gives you a CarPlay Simulator window. Note that
-MediaPlayer-based Apple Music detection doesn't work in the iOS Simulator, so
-end-to-end testing is best on a real device; the CarPlay Simulator is mainly
-useful for checking the Live Activity layout.
-
-### Why Drive Mode exists (and its cost)
-
-iOS suspends backgrounded apps, which would freeze polling and Live Activity
-updates a few seconds after you switch to the music app or lock the phone.
-Drive Mode keeps DriveVerse alive with a **low-power background location
-session** (kilometre accuracy, positions discarded immediately).
-
-Why location and not the classic silent-audio trick: iOS explicitly forbids
-Live Activity updates from apps whose only background reason is playing
-media (`liveactivitiesd: "Process is only playing background media so is
-forbidden to update activity"` — see
-[Apple Developer Forums #748569](https://developer.apple.com/forums/thread/748569)).
-Silent audio kept the app alive but silently disqualified every lyric
-update. A location session grants both background runtime *and* update
-permission — the same combination navigation apps rely on. First Drive Mode
-toggle prompts for location access; grant **While Using**, and accept the
-later "Always" upgrade if you want the CarPlay automation to work with the
-app fully closed.
-
-- It runs for as long as Drive Mode is toggled on — including through pauses
-  of any length. This is deliberate: a suspended app can neither detect the
-  resume nor restart the Live Activity from the background, so "pause for
-  half an hour, get back in, press play in Apple Music" only works if the
-  process stayed alive. The Live Activity is likewise held (pause glyph)
-  instead of ending 30 s after playback stops.
-- It costs some battery — that's why it's an explicit opt-in toggle. Use the
-  CarPlay automation below so it switches off when you leave the car.
-- **App Store:** using location purely as a keep-alive is acceptable for a
-  personally sideloaded build but would be rejected in App Review. A store
-  build would need a different approach (push-updated Live Activities from
-  a server).
-
-### Hands-free: start/stop with the car automatically
-
-DriveVerse ships two App Shortcuts — **Start Drive Mode** and **Stop Drive
-Mode** — meant for Shortcuts personal automations, so you never have to open
-the app in the car:
-
-1. Open **Shortcuts → Automation → + → CarPlay** (or **Bluetooth** and pick
-   the car stereo, for non-CarPlay cars).
-2. "When CarPlay connects" → **Run Immediately** (no confirmation) → add the
-   **Start Drive Mode** action from DriveVerse.
-3. Add a second automation: "When CarPlay disconnects" → **Stop Drive Mode**.
-
-Connecting to the car then launches DriveVerse in the background, turns
-Drive Mode on, and starts the Live Activity right away — as a
-"♪ Waiting for music…" placeholder if nothing is playing yet. The
-placeholder matters: iOS only lets a backgrounded app *update* an existing
-activity (starting one needs the foreground or an App Intent grant), so the
-tile must exist before the first track change. Disconnecting turns Drive
-Mode off so the keep-alive never outlives the trip.
-
-## Manual test checklists (real device)
-
-### Apple Music detection (Phase 3)
-
-- [ ] Fresh install prompts for Media & Apple Music access; granting it makes
-      the Home card fill in when Apple Music plays.
-- [ ] Play/pause in Apple Music flips the play indicator within ~1 s.
-- [ ] Track skip changes the card and refetches lyrics.
-- [ ] Seeking in Apple Music snaps the highlighted lyric line within ~1 s.
-- [ ] Playing in Spotify instead: Apple Music source reports nothing and the
-      card switches to the Spotify track (via polling).
-- [ ] Denying media access shows the permission banner on Home instead of
-      silently failing.
-
-### Spotify (Phase 4)
-
-- [ ] Connect Spotify completes in the in-app browser sheet and lands back in
-      the app showing “Connected”.
-- [ ] Playing in Spotify populates the card within one poll interval.
-- [ ] Revoking the app at <https://www.spotify.com/account/apps/> makes the
-      reconnect banner appear on the next poll.
-
-### Live Activity + CarPlay (Phase 6)
-
-- [ ] Starting a track with synced lyrics creates the Live Activity; lyric
-      lines advance on time.
-- [ ] Pausing shows the pause glyph; resuming continues. Stopping music ends
-      the activity ~30 s later.
-- [ ] Switching songs — including from the lock screen while the app is
-      backgrounded — keeps the tile and moves it to the new track; while
-      lyrics load (or for tracks without lyrics) it shows "♪ title".
-- [ ] Dynamic Island compact view shows the current line; long-press expands.
-- [ ] With CarPlay connected, the activity appears on the car screen.
-
-### Drive Mode (Phase 7)
-
-- [ ] Toggle Drive Mode on with music playing → lock the phone → lyric lines
-      keep advancing on the lock screen for whole songs.
-- [ ] Toggle it off → app suspends normally in the background (updates stop
-      after a while).
-- [ ] Drive Mode audio never makes your music duck or stutter.
-- [ ] Connect to CarPlay/Bluetooth with Drive Mode already on → lyrics keep
-      advancing (the route change restarts the keep-alive).
-- [ ] Invoke Siri or let an alarm fire mid-session → lyric updates resume
-      within a couple of seconds after it ends.
-- [ ] Lock the phone, wait 5+ minutes, switch songs from the lock screen →
-      the Live Activity follows within ~1 s.
-- [ ] Reopen the app after a long background stretch → the lyric line snaps
-      to the correct position immediately (foreground resync).
-- [ ] Pause for several minutes with Drive Mode on, phone locked → the tile
-      stays (pause glyph); resuming from Apple Music/Spotify without opening
-      DriveVerse picks the lyrics back up within a poll interval.
-- [ ] CarPlay automation: connecting runs Start Drive Mode (tile appears,
-      placeholder if nothing is playing); disconnecting runs Stop Drive Mode
-      (tile ends, keep-alive stops).
-
-## Known limitations
-
-- **No CarPlay widget (stretch goal not shipped).** The iOS 26 CarPlay
-  WidgetKit opt-in API was left out; the Live Activity covers the driving use
-  case. Revisit `DriveVerseWidgets` if you want to add it.
-- Without Drive Mode, background updates stop shortly after the app is
-  suspended — foreground the app or use Drive Mode for long sessions.
-- Spotify position is polled (3–10 s, configurable), so a seek in Spotify can
-  take up to one interval to snap.
-- The app can't seek playback (it's an observer) — the lyrics view is
-  display-only by design.
-- Tracks not on LRCLIB show “No lyrics found”; misses are re-checked after a
-  day, hits are cached for 30 days.
-
-## Project layout
-
-Generated by XcodeGen from `project.yml`. `Package.swift` is a development
-harness so the platform-independent core (everything under `DriveVerse/Core`,
-plus the Live Activity update policy) builds and tests on macOS via
-`swift test`; iOS-only code is fenced with `#if os(iOS)`.
+## How the project is organized
 
 ```
 DriveVerse/
-├── App/                DriveVerseApp, AppModel (wiring)
+├── App/            App entry point, Drive Mode shortcuts, and the main wiring
 ├── Core/
-│   ├── NowPlaying/     NowPlayingSource protocol, AppleMusicSource,
-│   │                   SpotifySource, NowPlayingCoordinator (arbitration)
-│   ├── Lyrics/         LRCParser, LyricsMatcher, LRCLIBClient,
-│   │                   LyricsCache, LyricsService
-│   ├── Sync/           SyncEngine (extrapolation + line index)
-│   ├── Auth/           SpotifyAuth (PKCE, Keychain, refresh)
-│   └── KeepAlive/      BackgroundKeeper (Drive Mode silent audio)
-├── LiveActivity/       LyricsAttributes (shared with widget),
-│                       LiveActivityController, update policy
-├── Features/           Home, LyricsView, Settings (SwiftUI)
-└── Resources/          Assets, Info.plist, Secrets(.example).plist
-DriveVerseWidgets/      Live Activity UI (lock screen + Dynamic Island)
-DriveVerseTests/        Swift Testing suite (also runs via ./scripts/test.sh)
+│   ├── NowPlaying/ Apple Music + Spotify sources and which one to trust
+│   ├── Lyrics/     LRCLIB client, parser, matcher, cache, romanizer
+│   ├── Sync/       Keeps the lyric line matched to the playback position
+│   ├── Auth/       Spotify login (PKCE, Keychain, token refresh)
+│   └── KeepAlive/  Drive Mode background location session
+├── LiveActivity/   The lyrics tile shown on CarPlay / lock screen
+├── Features/       Home, full-screen lyrics, Settings (SwiftUI)
+└── Resources/      Assets, Info.plist, Secrets files
+DriveVerseWidgets/  Live Activity + Dynamic Island UI
+DriveVerseTests/    The test suite
 ```
+
+The Xcode project is generated from `project.yml` with [XcodeGen](https://github.com/yonaskolb/XcodeGen). `Package.swift` is a helper so the core logic can be tested on a Mac without a device.
+
+## Built with
+
+Swift, SwiftUI, ActivityKit, WidgetKit, MediaPlayer, and Core Location. No third-party libraries. Lyrics by [LRCLIB](https://lrclib.net).

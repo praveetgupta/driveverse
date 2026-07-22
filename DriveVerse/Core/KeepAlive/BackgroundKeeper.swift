@@ -2,7 +2,6 @@ import Foundation
 
 #if os(iOS)
 import CoreLocation
-import UIKit
 import os
 
 enum KeepAliveError: Error {
@@ -27,7 +26,6 @@ final class BackgroundKeeper: NSObject, CLLocationManagerDelegate {
     private static let log = Logger(subsystem: "com.praveet.driveverse", category: "keepalive")
 
     private let manager = CLLocationManager()
-    private var heartbeat: Timer?
     private var wantsRunning = false
     private(set) var isRunning = false
 
@@ -44,10 +42,6 @@ final class BackgroundKeeper: NSObject, CLLocationManagerDelegate {
         manager.distanceFilter = 1_000
         manager.pausesLocationUpdatesAutomatically = false
         manager.activityType = .automotiveNavigation
-    }
-
-    deinit {
-        heartbeat?.invalidate()
     }
 
     func start() throws {
@@ -69,11 +63,8 @@ final class BackgroundKeeper: NSObject, CLLocationManagerDelegate {
         wantsRunning = false
         guard isRunning else { return }
         isRunning = false
-        heartbeat?.invalidate()
-        heartbeat = nil
         manager.stopUpdatingLocation()
         manager.allowsBackgroundLocationUpdates = false
-        Self.log.notice("keep-alive stopped")
     }
 
     private func activate() {
@@ -81,8 +72,6 @@ final class BackgroundKeeper: NSObject, CLLocationManagerDelegate {
         manager.allowsBackgroundLocationUpdates = true
         manager.startUpdatingLocation()
         isRunning = true
-        startHeartbeat()
-        Self.log.notice("keep-alive started (location, auth: \(self.manager.authorizationStatus.rawValue, privacy: .public))")
         // "Always" lets the CarPlay automation start Drive Mode with the app
         // launched straight into the background; When-In-Use is enough for
         // sessions begun in the foreground.
@@ -94,10 +83,8 @@ final class BackgroundKeeper: NSObject, CLLocationManagerDelegate {
     // MARK: - CLLocationManagerDelegate
 
     func locationManagerDidChangeAuthorization(_ manager: CLLocationManager) {
-        let status = manager.authorizationStatus
-        Self.log.notice("location authorization → \(status.rawValue, privacy: .public)")
         guard wantsRunning else { return }
-        switch status {
+        switch manager.authorizationStatus {
         case .authorizedWhenInUse, .authorizedAlways:
             activate()
         case .denied, .restricted:
@@ -115,18 +102,6 @@ final class BackgroundKeeper: NSObject, CLLocationManagerDelegate {
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         // Positions are irrelevant and discarded — the session's existence is
         // the feature.
-    }
-
-    /// Visible in Console.app: proof of background life. Silence in the log
-    /// stream while Drive Mode is on = the process got suspended anyway.
-    private func startHeartbeat() {
-        let timer = Timer(timeInterval: 10, repeats: true) { _ in
-            let remaining = UIApplication.shared.backgroundTimeRemaining
-            let remainingText = remaining > 86_400 ? "unlimited" : String(format: "%.0fs", remaining)
-            Self.log.notice("heartbeat (bg time: \(remainingText, privacy: .public))")
-        }
-        RunLoop.main.add(timer, forMode: .common)
-        heartbeat = timer
     }
 }
 #endif
