@@ -159,3 +159,7 @@ The Xcode project is generated from `project.yml` with [XcodeGen](https://github
 ## Built with
 
 Swift, SwiftUI, ActivityKit, WidgetKit, MediaPlayer, and Core Location. No third-party libraries. Lyrics by [LRCLIB](https://lrclib.net).
+
+## License
+
+The code is released under the [MIT License](LICENSE) — use it, fork it, learn from it. Note that this applies to the app's own code only, not to any song lyrics, which belong to their respective owners and are fetched from LRCLIB for personal use.
